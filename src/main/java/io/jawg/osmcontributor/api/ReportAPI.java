@@ -1,3 +1,5 @@
+package io.jawg.osmcontributor.api;
+
 /**
  * This class provides the methods to call our own API the report issues via the application
  */
