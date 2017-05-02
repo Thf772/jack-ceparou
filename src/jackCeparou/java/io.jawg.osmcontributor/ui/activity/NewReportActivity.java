@@ -1,4 +1,4 @@
-package io.jawg.osmcontributor.ui.activities;
+package io.jawg.osmcontributor.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;

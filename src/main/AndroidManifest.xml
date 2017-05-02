@@ -114,7 +114,7 @@
             android:name="io.fabric.ApiKey"
             android:value="fd3bf78e94fa9be288a9f662f853e9c8d6ce26c3" />
 
-        <activity android:name=".ui.activities.NewReportActivity"></activity>
+        <activity android:name=".ui.activity.NewReportActivity"></activity>
     </application>
 
 </manifest>
