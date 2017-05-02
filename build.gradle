@@ -151,7 +151,7 @@ android {
             buildConfigField "String", "FLICKR_TOKEN_SECRET", '"' + loadPropertiesFile("conf.properties").getProperty("flickr_token_secret") + '"'
             buildConfigField "String", "MAPBOX_TOKEN", '"' + loadPropertiesFile("conf.properties").getProperty("mapbox_token") + '"'
         }
-
+/*
         bus {
             applicationId "io.jawg.osmcontributor.bus"
             versionName "1.1"
@@ -177,7 +177,7 @@ android {
             buildConfigField "String", "FLICKR_TOKEN_SECRET", '"' + loadPropertiesFile("conf.properties").getProperty("flickr_token_secret") + '"'
             buildConfigField "String", "MAPBOX_TOKEN", '"' + loadPropertiesFile("conf.properties").getProperty("mapbox_token") + '"'
         }
-
+*/
         jackCeparou {
             applicationId "com.hackaton4if.h4112.jack_ceparou"
             versionName "1.1"
