@@ -251,5 +251,19 @@
             app:fab_colorNormal="@color/floating_ab_normal"
             app:fab_colorPressed="@color/floating_ab_pressed"
             app:fab_colorRipple="@color/floating_ab_ripple" />
+
+        <EditText
+            android:id="@+id/adressSearchField"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="22dp"
+            android:layout_marginStart="22dp"
+            android:layout_toRightOf="@+id/add_poi_few_values"
+            android:ems="10"
+            android:inputType="text|textPostalAddress"
+            android:singleLine="true"
+            android:text="Search" />
+
     </RelativeLayout>
 </RelativeLayout>
