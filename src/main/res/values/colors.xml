@@ -21,6 +21,14 @@
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <color name="colorPrimaryTransparent">#CC0000</color>
+    <color name="colorPrimary">#9b0000</color>
+    <color name="colorPrimaryDark">#660000</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="colorCreation">#FF9800</color>
+    <color name="colorCreationDark">#F57C00</color>
+
     <!-- Localisation floating button-->
     <color name="floating_ab_normal">#fff5f5f5</color>
     <color name="floating_ab_pressed">#ffececec</color>

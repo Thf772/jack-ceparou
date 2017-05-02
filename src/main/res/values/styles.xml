@@ -20,13 +20,6 @@
 
 -->
 <resources>
-    <color name="colorPrimaryTransparent">#2196f3</color>
-    <color name="colorPrimary">#1E88E5</color>
-    <color name="colorPrimaryDark">#1565C0</color>
-    <color name="colorAccent">#1565C0</color>
-    <color name="colorCreation">#FF9800</color>
-    <color name="colorCreationDark">#F57C00</color>
-
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar"/>
 
     <style name="AppTheme" parent="AppTheme.Base">
@@ -50,6 +43,12 @@
 
     <style name="CustomDialog" parent="@style/Theme.AppCompat.Light.Dialog">
         <item name="android:windowNoTitle">false</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
     </style>
 
     <style name="TextAppearance.ShowcaseView.Detail" parent="android:style/TextAppearance">

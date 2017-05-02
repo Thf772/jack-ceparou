@@ -252,4 +252,223 @@ Il est conseillé d\'avoir une connexion Wifi pendant le téléchargement.\n\nVo
   <string name="offline_step2">Zoomez pour sélectionner une zone</string>
   <string name="offline_step1">Cliquer pour sélectionner une région</string>
   <string name="offline_step4">Vos régions apparaitront ici.</string>
+  <string name="app_name">Jack Ceparou</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Option</string>
+    <string name="title_activity_settings">Options</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Nom affiché</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_langage">Langue</string>
+    <string-array name="pref_langage_titles">
+        <item>Anglais</item>
+        <item>Français</item>
+    </string-array>
+    <string-array name="pref_langage_values">
+        <item>EN</item>
+        <item>FR</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Synchronisation </string>
+
+    <string name="pref_title_sync_frequency">Frequence de synchronisation</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>1 minute</item>
+        <item>3 minutes</item>
+        <item>5 minutes</item>
+        <item>7 minutes</item>
+        <item>10 minutes</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>60000</item>
+        <item>180000</item>
+        <item>300000</item>
+        <item>420000</item>
+        <item>600000</item>
+    </string-array>
+
+    <string-array name="pref_font_size_titles">
+        <item>small</item>
+        <item>normal</item>
+        <item>large</item>
+        <item>xlarge</item>
+    </string-array>
+
+    <string-array name="list_preference_entries">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+    </string-array>
+
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="multi_select_list_preference_default_value" />
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">Nouveau report</string>
+
+    <string name="pref_title_ringtone">Sonnerie</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibreur</string>
+    <string name="color_blindness_summary">Activer cette option si vous êtes daltonien</string>
+    <string name="color_blindness">Daltonisme</string>
+    <string name="font_size">Taille de la police</string>
+    <string name="dyslexy">Dyslexie</string>
+    <string name="dyslexy_summary">Activer cette option si vous êtes dyslexique</string>
+    <string name="pref_header_accessibilty">Accessibilité</string>
+    <string name="activate_Localisation">Localisation</string>
+    <string name="pref_title_new_report_notifications">Notification</string>
+    <string name="pref_notification_summary">Alerte lorsqu\'un incident est détecté dans les environs</string>
+    <string name="first_launch">C\'est la première fois que vous ouvrez cette application, la fenetre d\'option va se lancer pour que l\'application soit plus adapté à vos besoin</string>
+    <string name="first_launch_button">ok</string>
+    <string name="setup">Premier lancement</string>
+    <!--<string name="ok">Ok</string>-->
+
+    <string name="title_activity_contribute_guide">Comment contribuer?</string>
+    <string name="content_activity_contribute_guide">Signaler un obstacle\n\nVous avez trouvé un obstacle qui n\'est pas indiqué sur la carte?\nAIdez la communauté en le signalant!\n</string>
+    <string name="open_map_view">Ouvrir la carte</string>
+    <string name="filter_wheelchair_easy">Facile pour les fauteuils</string>
+    <string name="filter_wheelchair_hard">Difficile pour les fauteuils</string>
+    <string name="filter_wheelchair_impossible">Impossible pour les fauteuils</string>
+    <string name="filter_menu_name">Filtres</string>
+    <string name="filter_elevators">Ascenseurs</string>
+    <string name="filter_stairways">Escaliers</string>
+    <string name="filter_has_ramp">Entrée avec rampe</string>
+    <string name="filter_no_ramp">Entrée sans rampe</string>
+    <string name="filter_temporary_obstacle">Obstacle temporaires</string>
+    <string name="filter_permanent_obstacle">Obstacles permanents</string>
+    <string name="filter_pedestrian">Zone piétonne</string>
+    <string name="title_activity_map">Carte</string>
+    <string name="osm_bar">Bar</string>
+    <string name="osm_bbq">Barbecue</string>
+    <string name="osm_biergarten">Brasserie en plein air</string>
+    <string name="osm_cafe">Café</string>
+    <string name="osm_drinking_water">Source d\'eau potable</string>
+    <string name="osm_fast_food">Restauration rapide</string>
+    <string name="osm_food_court">Aire de restauration</string>
+    <string name="osm_ice_cream">Glacier</string>
+    <string name="osm_pub">Pub</string>
+    <string name="osm_restaurant">Restaurant</string>
+    <string name="osm_college">Etablissement d\'enseignement supérieur non universitaire</string>
+    <string name="osm_kindergarten">Garderie, école maternelle</string>
+    <string name="osm_library">Bibliothèque</string>
+    <string name="osm_public_bookcase">Microbibliothèque</string>
+    <string name="osm_school">École</string>
+    <string name="osm_music_school">École de musique</string>
+    <string name="osm_driving_school">Auto-école</string>
+    <string name="osm_language_school">École de langues</string>
+    <string name="osm_university">Université, campus universitaire</string>
+    <string name="osm_bicycle_parking">Parking à vélos</string>
+    <string name="osm_bicycle_repair_station">Aire de réparation de vélos</string>
+    <string name="osm_bicycle_rental">Location de vélos</string>
+    <string name="osm_boat_sharing">Partage de bateaux</string>
+    <string name="osm_bus_station">Gare routière</string>
+    <string name="osm_car_rental">Location de voitures</string>
+    <string name="osm_car_sharing">Station d\'autopartage</string>
+    <string name="osm_car_wash">Station de lavage</string>
+    <string name="osm_charging_station">Station de recharge</string>
+    <string name="osm_ferry_terminal">Terminal de ferry</string>
+    <string name="osm_fuel">Station-service</string>
+    <string name="osm_grit_bin">Bac à sel</string>
+    <string name="osm_motorcycle_parking">Parking à motos</string>
+    <string name="osm_parking">Parking</string>
+    <string name="osm_parking_entrance">Entrée ou sortie de parking</string>
+    <string name="osm_parking_space">Place de parking</string>
+    <string name="osm_taxi">Station de taxis</string>
+    <string name="osm_atm">Distributeur de billets</string>
+    <string name="osm_bank">Banque</string>
+    <string name="osm_bureau_de_change">Bureau de change</string>
+    <string name="osm_clinic">Clinique</string>
+    <string name="osm_dentist">Dentiste</string>
+    <string name="osm_doctors">Cabinet médical</string>
+    <string name="osm_hospital">Hôpital</string>
+    <string name="osm_nursing_home">Maison de retraite</string>
+    <string name="osm_pharmacy">Pharmacie</string>
+    <string name="osm_social_facility">Services sociaux</string>
+    <string name="osm_veterinary">Vétérinaire</string>
+    <string name="osm_blood_donation">Centre de don du sang</string>
+    <string name="osm_arts_centre">Centre artistique</string>
+    <string name="osm_casino">Casino</string>
+    <string name="osm_cinema">Cinéma</string>
+    <string name="osm_community_centre">Salle des fêtes</string>
+    <string name="osm_fountain">Fontaine</string>
+    <string name="osm_gambling">Salle de jeux d\'argent</string>
+    <string name="osm_nightclub">Boîte de nuit</string>
+    <string name="osm_planetarium">Planétarium</string>
+    <string name="osm_social_centre">Pole associatif</string>
+    <string name="osm_stripclub">Club de strip-tease</string>
+    <string name="osm_studio">Studio d\'enregistrement</string>
+    <string name="osm_animal_boarding">Pension pour animaux</string>
+    <string name="osm_animal_shelter">Refuge pour animaux</string>
+    <string name="osm_baking_oven">Four à pain</string>
+    <string name="osm_bench">Banc</string>
+    <string name="osm_clock">Horloge</string>
+    <string name="osm_courthouse">Palais de Justice</string>
+    <string name="osm_coworking_space">Espace de coworking</string>
+    <string name="osm_crematorium">Crématorium</string>
+    <string name="osm_crypt">Crypte</string>
+    <string name="osm_dive_centre">Centre de plongée</string>
+    <string name="osm_dojo">Dojo</string>
+    <string name="osm_embassy">Ambassade</string>
+    <string name="osm_fire_station">Caserne de pompiers</string>
+    <string name="osm_game_feeding">Point de nourrissage</string>
+    <string name="osm_grave_yard">Petit Cimetière</string>
+    <string name="osm_hunting_stand">Affût de chasse</string>
+    <string name="osm_internet_cafe">Cybercafé</string>
+    <string name="osm_kneipp_water_cure">Bain de pieds extérieur</string>
+    <string name="osm_marketplace">Place de marché</string>
+    <string name="osm_photo_booth">Photomaton</string>
+    <string name="osm_place_of_worship">Lieu de culte</string>
+    <string name="osm_police">Poste de police, gendarmerie</string>
+    <string name="osm_post_box">Boîte aux lettres</string>
+    <string name="osm_post_office">Bureau de poste</string>
+    <string name="osm_prison">Prison</string>
+    <string name="osm_ranger_station">Services des parcs nationaux</string>
+    <string name="osm_recycling">Point de collecte pour le recyclage</string>
+    <string name="osm_shelter">Abri</string>
+    <string name="osm_shower">Douches publiques</string>
+    <string name="osm_table">Table</string>
+    <string name="osm_telephone">Cabine téléphonique</string>
+    <string name="osm_toilets">Toilettes publiques</string>
+    <string name="osm_townhall">Mairie</string>
+    <string name="osm_vending_machine">Distributeur automatique (boissons, etc.)</string>
+    <string name="osm_waste_basket">Poubelle</string>
+    <string name="osm_waste_disposal">Collecte d\'ordures</string>
+    <string name="osm_waste_transfer_stations">Station de transferts d\'ordures</string>
+    <string name="osm_watering_place">Point d\'eau pour animaux</string>
+    <string name="osm_water_point">Point d\'eau</string>
+    <string name="osm_theatre">Théâtre</string>
+    <string name="map_filters_wheelchair">Accessibilité en fauteuil roulant</string>
+    <string name="map_filters_elevators">Ascenseurs/Escaliers</string>
+    <string name="map_filters_wheelchair_ramp">Entrées avec rampe</string>
+    <string name="map_filters_obstacles">Obstacles</string>
+    <string name="Synchronisation_title">Synchronisation</string>
+    <string name="Synchronisation_value">Activate the data\'s synchronisation</string>
+    <string name="notification_message">Nouvel obstacle</string>
+    <string name="notification_message_values">Un nouvel obstacle a été repéré à proximité</string>
+    <string name="pref_header_connection">Parametre de connection</string>
 </resources>

@@ -1,0 +1,7 @@
+COMMAND=PREDEX_LIBRARY
+FILE_PATH=C:\Users\Flo Macé\.gradle\caches\modules-2\files-2.1\org.apache.axis\axis\1.4\94a9ce681a42d0352b3ad22659f67835e560d107\axis-1.4.jar
+FILE_HASH=94a9ce681a42d0352b3ad22659f67835e560d107
+BUILD_TOOLS_REVISION=25.0.1
+JUMBO_MODE=true
+OPTIMIZE=true
+MULTI_DEX=true

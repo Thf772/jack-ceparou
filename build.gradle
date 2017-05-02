@@ -234,6 +234,8 @@ dependencies {
     compile "com.github.scribejava:scribejava-apis:$scribeJavaVersion"
     compile 'info.guardianproject.netcipher:netcipher:1.2'
 
+    compile 'uk.co.chrisjenx:calligraphy:2.2.0'
+
     compile("com.mapbox.mapboxsdk:mapbox-android-sdk:$mapboxVersion@aar") {
         transitive = true
     }
