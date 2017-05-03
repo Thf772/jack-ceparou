@@ -42,21 +42,9 @@ public class DirectionsCalculator {
     public DirectionsCalculator(EventBus events) {
         this.points = new Vector<Poi>();
         this.events = events;
-        this.enable();
-    }
-
-    public void enable() {
-        events.register(this);
-        this.enabled = true;
-    }
-
-    public void disable() {
-        events.unregister(this);
-        this.enabled = false;
     }
 
     public void setBus(EventBus events) {
-        if (this.enabled) this.disable();
         this.events = events;
     }
 
@@ -98,7 +86,7 @@ public class DirectionsCalculator {
     ////////////////////////////////////////////////////////////////////
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public boolean calculateDirections() {
+    public boolean calculateDirections(StartDirectionsCalculationEvent ev) {
         if (!this.isReady()) return false; // TODO Error signalling
 
         ArrayList<Position> pos = new ArrayList<>(this.points.size());
