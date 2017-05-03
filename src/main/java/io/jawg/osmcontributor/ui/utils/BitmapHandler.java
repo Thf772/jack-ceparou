@@ -212,7 +212,6 @@ public class BitmapHandler {
         return cache.get(key);
     }
 
-
     /**
      * Handle Bitmap load, storage and retrieval for MapFragment.
      * <br/>
@@ -290,10 +289,10 @@ public class BitmapHandler {
      *
      * @param poiType The PoiType of the desired bitmap.
      * @param state   State of the Poi.
-     * @param accessibilityState Accessibility state of the Poi.
+     * @param accessibilityType Accessibility type of the Poi.
      * @return The marker corresponding to the poiType and the poi state.
      */
-    public Bitmap getMarkerBitmap(PoiType poiType, Poi.State state, char accessibilityState) {
+    public Bitmap getMarkerBitmap(PoiType poiType, Poi.State state, Poi.AccessibilityType accessibilityType) {
 
         try {
 
@@ -310,7 +309,21 @@ public class BitmapHandler {
 
             switch (state) {
                 case NORMAL:
-                    markerId = R.drawable.marker_white;
+                    // 4 accessibility types :
+                    switch (accessibilityType) {
+                        case YES:
+                            markerId = R.drawable.marker_true_green;
+                            break;
+                        case NO:
+                            markerId = R.drawable.marker_true_red;
+                            break;
+                        case LIMITED:
+                            markerId = R.drawable.marker_true_orange;
+                            break;
+                        case UNKNOWN:
+                            markerId = R.drawable.marker_true_grey;
+                            break;
+                    }
                     break;
                 case NOT_SYNCED:
                     markerId = R.drawable.marker_grey;
@@ -320,22 +333,6 @@ public class BitmapHandler {
                     break;
                 case MOVING:
                     markerId = R.drawable.marker_red;
-                    break;
-            }
-
-            // 4 accessibility states :
-            switch (accessibilityState) {
-                case 'Y':
-                    markerId = R.drawable.marker_true_green;
-                    break;
-                case 'N':
-                    markerId = R.drawable.marker_true_red;
-                    break;
-                case 'B':
-                    markerId = R.drawable.marker_true_orange;
-                    break;
-                case 'U':
-                    markerId = R.drawable.marker_true_grey;
                     break;
             }
 

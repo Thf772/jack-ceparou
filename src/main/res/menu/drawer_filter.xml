@@ -22,6 +22,29 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/drawer_filter_accessibility_menu"
+        android:title="@string/filter_accessibility">
+        <menu>
+            <item
+                android:id="@+id/display_yes_accessibility"
+                android:icon="@drawable/check_circle"
+                android:title="@string/filter_accessibility_yes"/>
+            <item
+                android:id="@+id/display_limited_accessibility"
+                android:icon="@drawable/minus_circle"
+                android:title="@string/filter_accessibility_limited"/>
+            <item
+                android:id="@+id/display_no_accessibility"
+                android:icon="@drawable/close_circle"
+                android:title="@string/filter_accessibility_no"/>
+            <item
+                android:id="@+id/display_unknown_accessibility"
+                android:icon="@drawable/help_circle"
+                android:title="@string/filter_accessibility_unknown"/>
+        </menu>
+    </item>
+
+    <item
         android:id="@+id/drawer_filter_notes_menu"
         android:title="@string/filter_notes">
         <menu>
