@@ -18,76 +18,79 @@
 
         tools:layout_editor_absoluteY="0dp" />
 
-    <Button
-        android:id="@+id/send_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_weight="0.5"
-        android:text="Envoyer"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
-
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="368dp"
+        android:layout_height="551dp"
+        android:layout_weight="0.5"
         android:orientation="vertical"
-        android:weightSum="1"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/send_button"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="@+id/guideline"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent">
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp">
 
-
-        <ImageView
-            android:id="@+id/image_view"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_weight="0.5"
-            android:clickable="false"
-            android:cropToPadding="true"
-            android:scaleType="fitCenter"
-            app:layout_constraintLeft_toLeftOf="@+id/parent"
-            app:layout_constraintRight_toRightOf="@+id/parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/ic_menu_camera" />
+            android:layout_weight="0.8"
+            android:orientation="vertical"
+            android:weightSum="1"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="16dp">
 
-        <EditText
-            android:id="@+id/IssueName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.1"
-            android:ems="10"
-            android:hint="Quel est le problème ?"
-            android:inputType="textNoSuggestions|textShortMessage"
-            android:maxLines="1"
-            android:selectAllOnFocus="true" />
 
-        <EditText
-            android:id="@+id/IssueDetails"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.18"
-            android:ems="10"
-            android:hint="Plus de détails ..."
-            android:inputType="textMultiLine"
-            android:selectAllOnFocus="true" />
+            <ImageView
+                android:id="@+id/image_view"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:layout_margin="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="0dp"
+                android:clickable="false"
+                android:cropToPadding="true"
+                android:scaleType="fitCenter"
+                app:layout_constraintLeft_toLeftOf="@+id/parent"
+                app:layout_constraintRight_toRightOf="@+id/parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@android:drawable/ic_menu_camera" />
 
+            <EditText
+                android:id="@+id/IssueName"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_weight="0.1"
+                android:ems="10"
+                android:hint="Quel est le problème ?"
+                android:inputType="textNoSuggestions|textShortMessage"
+                android:maxLines="1"
+                android:selectAllOnFocus="true" />
+
+            <EditText
+                android:id="@+id/IssueDetails"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_weight="0.66"
+                android:ems="10"
+                android:hint="Plus de détails ..."
+                android:inputType="textMultiLine"
+                android:selectAllOnFocus="true" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/send_button"
+            android:layout_width="338dp"
+            android:layout_height="60dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="0.07"
+            android:text="Envoyer"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

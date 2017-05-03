@@ -71,6 +71,8 @@ public class NewReportActivity extends AppCompatActivity {
     }
 
 
+
+
     /**
      * This method handles the return on activity. Here the only activty that may be called is the
      * camera one.
