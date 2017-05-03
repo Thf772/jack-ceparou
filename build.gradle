@@ -14,7 +14,7 @@ ext {
     stethoVersion = '1.3.1'
     jodatimeVersion = '2.9.4'
     flickr4javaVersion = '2.16'
-    mapboxVersion = '4.2.0'
+    mapboxVersion = '5.0.2'
     mapboxServicesVersion = '1.2.1'
     retrofitVersion = '1.9.0'
     okhttpVersion = '2.3.0'
@@ -36,6 +36,7 @@ ext {
 buildscript {
     repositories {
         jcenter()
+        mavenCentral()
         maven { url 'https://maven.fabric.io/public' }
         flatDir {
             dirs 'lib'
