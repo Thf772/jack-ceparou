@@ -252,5 +252,17 @@
             app:fab_colorPressed="@color/floating_ab_pressed"
             app:fab_colorRipple="@color/floating_ab_ripple" />
 
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/query_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_magnify_grey600_24dp"
+            app:fab_colorNormal="@color/floating_ab_normal"
+            app:fab_colorPressed="@color/floating_ab_pressed"
+            app:fab_colorRipple="@color/floating_ab_ripple"
+            android:layout_above="@+id/localisation"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
     </RelativeLayout>
 </RelativeLayout>

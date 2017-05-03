@@ -1455,6 +1455,15 @@ public class MapFragment extends Fragment {
         }
     }
 
+    @BindView(R.id.query_button)
+    FloatingActionButton query_button;
+
+    @OnClick(R.id.query_button)
+    public void showSearchBar()
+    {
+        
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onChangeMapModeEvent(ChangeMapModeEvent event) {
         switchMode(event.getMapMode());
