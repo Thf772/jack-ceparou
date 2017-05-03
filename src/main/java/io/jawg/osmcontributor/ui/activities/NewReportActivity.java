@@ -1,19 +1,25 @@
-package io.jawg.osmcontributor.ui.activity;
+package io.jawg.osmcontributor.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import com.mapbox.mapboxsdk.location.LocationServices;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,9 +28,12 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.jawg.osmcontributor.api.ReportAPI;
 
 import io.jawg.osmcontributor.R;
+import io.jawg.osmcontributor.model.event.CreateNewReportEvent;
 
 import static android.provider.MediaStore.ACTION_IMAGE_CAPTURE;
 
@@ -32,24 +41,35 @@ public class NewReportActivity extends AppCompatActivity {
 
     ImageCapture imageCapture;
     String imageFilePath;
+    ReportAPI reportAPI;
+    EventBus eventBus;
+
+    @BindView(R.id.send_button)
+    Button sendReportButton;
+
+    @BindView(R.id.image_view)
+    ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_new_report);
+        ButterKnife.bind(this);
+        eventBus = EventBus.getDefault();
+        reportAPI = new ReportAPI(this);
+        eventBus.register(reportAPI);
 
         imageCapture = new ImageCapture(this);
         View.OnClickListener sendButtonListener = new SendReport(this);
 
-
-        final Button sendReportButton = (Button) findViewById(R.id.SendButton);
         sendReportButton.setOnClickListener(sendButtonListener);
 
         //Open the camera to take a picture
-        final ImageView imageView = (ImageView) findViewById(R.id.image);
+
         imageView.setOnClickListener(imageCapture);
         imageView.performClick();
 
-        setContentView(R.layout.activity_new_report);
+
     }
 
 
@@ -69,7 +89,6 @@ public class NewReportActivity extends AppCompatActivity {
                 FileInputStream imageStored = new FileInputStream(imageFilePath);
                 Bitmap bitmapImage = BitmapFactory.decodeStream(imageStored);
 
-                final ImageView imageView = (ImageView) findViewById(R.id.image);
                 imageView.setImageBitmap(bitmapImage);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -169,13 +188,24 @@ public class NewReportActivity extends AppCompatActivity {
                 String issueTitle =  title.getText().toString();
                 String issueDescription = description.getText().toString();
 
-                ReportAPI.createNewReport(issueTitle, issueDescription, imageFilePath);
+                LocationServices service = LocationServices.getLocationServices(parent);
+                service.toggleGPS(true);
+                if ( service.isGPSEnabled() ) {
+                    Location loc = service.getLastLocation();
+
+                    CreateNewReportEvent event = new CreateNewReportEvent(issueTitle, issueDescription, loc.getLatitude(), loc.getLongitude(), imageFilePath);
+
+                    eventBus.post(event);   //The event is posted, it will be carried to the ReportAPI class
+                    parent.onDestroy();
+                } else {
+                    //TODO there is something wrong with the gps
+                }
 
             } else {   //TODO Kindky ask the user to give a title to its new issue
 
                 final EditText title = (EditText) findViewById(R.id.IssueName);
                 title.performClick();
-            }
+            } final ImageView imageView = (ImageView) findViewById(R.id.image);
         }
 
         boolean compulsoryFieldsAreFilled() {

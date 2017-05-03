@@ -248,12 +248,14 @@ dependencies {
 
     // UI libraries
     compile "com.android.support:cardview-v7:$androidSupportVersion"
-    compile "com.android.support:recyclerview-v7:$androidSupportVersion"
+    compile "com.android.support:recyclerview-v7:25.+"
     compile "com.android.support:design:$androidSupportVersion"
     compile "com.github.iammert:MaterialIntroView:$materialIntroViewVersion"
     compile "com.yarolegovich:lovely-dialog:$lovelyDialogVersion"
     compile "com.github.clans:fab:$clansFabVersion"
     compile "com.facebook.fresco:fresco:$frescoVersion"
+
+
 
     // Flickr Helper
     compile "com.flickr4java:flickr4java:$flickr4javaVersion"
@@ -266,6 +268,7 @@ dependencies {
     compile("com.mapbox.mapboxsdk:mapbox-android-services:$mapboxServicesVersion@aar") {
         transitive = true
     }
+    compile 'com.android.volley:volley:1.0.0'
     compile "de.psdev.licensesdialog:licensesdialog:$licensesdialogVersion"
     compile(name: "arpigl-release-$arpiglVersion", ext: "aar")
 
@@ -327,9 +330,9 @@ task checkstyle(type: Checkstyle) {
     // empty classpath
     classpath = files()
 }
-/*
-preBuild.dependsOn('checkstyle')
-*/
+
+/*preBuild.dependsOn('checkstyle')*/
+
 /*apply plugin: 'com.github.hierynomus.license'
 license {
     header = file("LICENSE-HEADER")

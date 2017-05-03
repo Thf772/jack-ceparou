@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="io.jawg.osmcontributor.ui.activity.NewReportActivity">
+    tools:context="io.jawg.osmcontributor.ui.activities.NewReportActivity">
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
@@ -28,7 +28,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/image"
+            android:id="@+id/image_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.63"
@@ -46,7 +46,7 @@
             android:ems="10"
             android:inputType="textNoSuggestions|textShortMessage"
             android:selectAllOnFocus="true"
-            android:singleLine="true"
+            android:maxLines="1"
             android:text="Quel est le problème ?"
             tools:layout_editor_absoluteX="11dp"
             tools:layout_editor_absoluteY="193dp" />
@@ -59,14 +59,13 @@
             android:ems="10"
             android:inputType="textMultiLine"
             android:selectAllOnFocus="true"
-            android:singleLine="false"
             android:text="Plus de détails ..."
             tools:layout_editor_absoluteX="12dp"
             tools:layout_editor_absoluteY="259dp" />
 
 
         <Button
-            android:id="@+id/SendButton"
+            android:id="@+id/send_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"

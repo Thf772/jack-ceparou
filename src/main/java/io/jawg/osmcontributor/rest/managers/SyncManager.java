@@ -97,6 +97,10 @@ public class SyncManager {
         if (notes != null && notes.size() > 0) {
             noteManager.mergeBackendNotes(notes);
         }
+        //TODO add request to our own little system
+
+
+
         bus.post(new PoisAndNotesDownloadedEvent());
     }
 
