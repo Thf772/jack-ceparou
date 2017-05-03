@@ -95,6 +95,7 @@ import io.jawg.osmcontributor.BuildConfig;
 import io.jawg.osmcontributor.OsmTemplateApplication;
 import io.jawg.osmcontributor.R;
 import io.jawg.osmcontributor.api.IssueMarker;
+import io.jawg.osmcontributor.api.ReportAPI;
 import io.jawg.osmcontributor.model.entities.Note;
 import io.jawg.osmcontributor.model.entities.Poi;
 import io.jawg.osmcontributor.model.entities.PoiNodeRef;
@@ -102,6 +103,8 @@ import io.jawg.osmcontributor.model.entities.PoiTag;
 import io.jawg.osmcontributor.model.entities.PoiType;
 import io.jawg.osmcontributor.model.entities.PoiTypeTag;
 import io.jawg.osmcontributor.model.entities.Way;
+import io.jawg.osmcontributor.model.event.PleaseLoadIssuesEvent;
+import io.jawg.osmcontributor.model.events.IssuesLoadedEvent;
 import io.jawg.osmcontributor.model.events.PleaseDeletePoiEvent;
 import io.jawg.osmcontributor.model.events.PleaseRemoveArpiMarkerEvent;
 import io.jawg.osmcontributor.rest.events.SyncDownloadWayEvent;
@@ -200,6 +203,7 @@ public class MapFragment extends Fragment {
 
     private Map<Long, LocationMarkerViewOptions<Poi>> markersPoi;
     private Map<Long, LocationMarkerViewOptions<Note>> markersNotes;
+    private Map<Long, LocationMarkerViewOptions<IssueMarker>> markersIssues;
     private Map<Long, WayMarkerOptions> markersNodeRef;
 
     private List<IssueMarker> markerIssues; //Our custom markers
@@ -954,6 +958,11 @@ public class MapFragment extends Fragment {
         addNoteMarkerDependingOnFilters(marker);
     }
 
+    public void addIssue(LocationMarkerViewOptions<IssueMarker> marker) {
+        markersIssues.put(marker.getMarker().getRelatedObject().getId(), marker);
+        addIssueMarkerDependingOnFilters(marker);
+    }
+
     public LocationMarkerViewOptions<Note> getNote(Long id) {
         return markersNotes.get(id);
     }
@@ -1030,6 +1039,12 @@ public class MapFragment extends Fragment {
             clearAllNodeRef();
             updateVectorials(event.getWays(), event.getLevels());
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onPleaseLoadIssues(PleaseLoadIssuesEvent event) {
+        List<IssueMarker> listIssues = ReportAPI.getListOfIssues(null);
+        eventBus.post(new IssuesLoadedEvent(listIssues));
     }
 
     public void onCameraChangeUpdatePolyline() {
@@ -1878,6 +1893,11 @@ public class MapFragment extends Fragment {
             //if the poi selected is hidden close the detail mode
             switchMode(MapMode.DEFAULT);
         }
+    }
+
+    private void addIssueMarkerDependingOnFilters(LocationMarkerViewOptions<IssueMarker> markerOption) {
+        IssueMarker issue = markerOption.getMarker().getRelatedObject();
+        addMarkerView(markerOption);
     }
 
     /*-----------------------------------------------------------

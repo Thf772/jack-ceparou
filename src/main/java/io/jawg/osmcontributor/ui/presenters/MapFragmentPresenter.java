@@ -35,10 +35,13 @@ import javax.inject.Inject;
 
 import io.jawg.osmcontributor.BuildConfig;
 import io.jawg.osmcontributor.OsmTemplateApplication;
+import io.jawg.osmcontributor.api.IssueMarker;
 import io.jawg.osmcontributor.model.entities.Note;
 import io.jawg.osmcontributor.model.entities.Poi;
 import io.jawg.osmcontributor.model.entities.PoiNodeRef;
 import io.jawg.osmcontributor.model.entities.PoiType;
+import io.jawg.osmcontributor.model.event.PleaseLoadIssuesEvent;
+import io.jawg.osmcontributor.model.events.IssuesLoadedEvent;
 import io.jawg.osmcontributor.model.events.NotesLoadedEvent;
 import io.jawg.osmcontributor.model.events.PleaseLoadNotesEvent;
 import io.jawg.osmcontributor.model.events.PleaseLoadPoiTypes;
@@ -178,6 +181,17 @@ public class MapFragmentPresenter {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onIssueLoadedEvent(IssuesLoadedEvent event) {
+        List<IssueMarker> markers = event.getMarkers();
+
+        List<MapElement> mapElements = new ArrayList<>(markers.size());
+        for (IssueMarker issue : markers) {
+            mapElements.add(issue);
+        }
+        onLoaded(mapElements, LocationMarkerView.MarkerType.ISSUE);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNotesLoadedEvent(NotesLoadedEvent event) {
         mapFragment.removeAllNotes();
         List<Note> notes = event.getNotes();
@@ -216,6 +230,7 @@ public class MapFragmentPresenter {
                     triggerReloadPoiLatLngBounds = enlarge(viewLatLngBounds, 1.5);
                     eventBus.post(new PleaseLoadPoisEvent(enlarge(viewLatLngBounds, 1.75)));
                     eventBus.post(new PleaseLoadNotesEvent(enlarge(viewLatLngBounds, 1.75)));
+                    eventBus.post(new PleaseLoadIssuesEvent());
                 }
             }
         }
@@ -260,6 +275,9 @@ public class MapFragmentPresenter {
         if (relatedObject instanceof Poi) {
             Poi poi = (Poi) relatedObject;
             bitmap = mapFragment.getBitmapHandler().getMarkerBitmap(poi.getType(), Poi.computeState(selected, false, poi.getUpdated()), poi.computeAccessibilityType());
+        } else if (relatedObject instanceof IssueMarker) {
+            IssueMarker issueMarker = (IssueMarker) relatedObject;
+            bitmap = mapFragment.getBitmapHandler().getNoteBitmap(Note.State.SELECTED);
         } else {
             Note note = (Note) relatedObject;
             bitmap = mapFragment.getBitmapHandler().getNoteBitmap(Note.computeState(note, selected, false));
@@ -315,6 +333,11 @@ public class MapFragmentPresenter {
                         selected = true;
                     }
                     setIcon(markerOptions, oldPoi, selected);
+                } else if (mapFragment.getSelectedMarkerType().equals(LocationMarkerView.MarkerType.ISSUE)) {
+                    IssueMarker issue = (IssueMarker) mapElement;
+                    mapFragment.addIssue(markerOptions);
+
+
                 } else {
                     if (mapFragment.getSelectedMarkerType().equals(LocationMarkerView.MarkerType.NOTE)
                             && markerSelected != null
