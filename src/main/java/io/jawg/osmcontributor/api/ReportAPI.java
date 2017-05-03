@@ -11,20 +11,29 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.common.io.Files;
-
+import com.mapbox.mapboxsdk.geometry.LatLng;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +50,8 @@ public class ReportAPI {
     public static final String UPLOAD_IMAGE_ADDRESS = "http://jcerv.heptacle.fr/api/uploadImage/";
     public static final String GET_REPORTS_ADDRESS = "http://jcerv.heptacle.fr/api/findReports";
 
+    public static final String CHARSET = "UTF-8";
+
     RequestQueue queue;
 
     /**
@@ -50,50 +61,62 @@ public class ReportAPI {
     public void onCreateNewReport(final CreateNewReportEvent event) {
         Log.w("REPORT API", "Event to create report carried succsessfully");
 
-        final String charset = "UTF-8";
+
         String params;
         try {
             params = String.format("type=%s&" + "latitude=%s&" + "longitude=%s&" + "name=%s&" + "description=%s",
-                    URLEncoder.encode("OB", charset),
-                    URLEncoder.encode(event.getLatitude().toString(), charset),
-                    URLEncoder.encode(event.getLongitude().toString(), charset),
-                    URLEncoder.encode(event.getTitle(), charset),
-                    URLEncoder.encode(event.getDescription(), charset));
+                    URLEncoder.encode("OB", CHARSET),
+                    URLEncoder.encode(event.getLatitude().toString(), CHARSET),
+                    URLEncoder.encode(event.getLongitude().toString(), CHARSET),
+                    URLEncoder.encode(event.getTitle(), CHARSET),
+                    URLEncoder.encode(event.getDescription(), CHARSET));
 
-            // Request a string response from the provided URL.
-            JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.POST, CREATE_REPORT_ADDRESS + params, null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            Log.w("RESPONSE", response.toString());
+            URLConnection connection = new URL(CREATE_REPORT_ADDRESS).openConnection();
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Accept-Charset", CHARSET);
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + CHARSET);
+            OutputStream output = connection.getOutputStream();
+            output.write(params.getBytes(CHARSET));
 
-                            String id = null;
-                            try {
-                                id = response.get("id").toString();
-                                uploadImage(id, event.getImageFilePath());
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            uploadImage(id, event.getImageFilePath());
 
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.w("RESPONSE_ERROR", error);
-                    String id = null;
-                    /*try {
-                      //  id = response.get("id").toString();
-                      //  uploadImage(id, event.getImageFilePath());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    uploadImage(id, event.getImageFilePath());*/
-                }
-            });
+            InputStream response = connection.getInputStream();
 
-            queue.add(stringRequest);
+            StringBuilder builder = new StringBuilder();
+            int character;
+            while ((character = response.read()) != -1) {
+                builder.append((char) character);
+            }
+            String text = builder.toString();
+            response.close();
+
+            JSONObject jObject = new JSONObject(text);
+
+
+            JSONObject value = jObject.getJSONObject("value");
+
+            Integer id = value.getInt("id");
+            if (id != null){
+                //Let's try to do a put
+
+
+                URL url = new URL(UPLOAD_IMAGE_ADDRESS + id.toString());
+                HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+                httpCon.setDoOutput(true);
+                httpCon.setRequestMethod("PUT");
+                BufferedOutputStream out = new BufferedOutputStream(
+                        httpCon.getOutputStream());
+                out.write(Files.toByteArray(new File(event.getImageFilePath())));
+                out.close();
+                httpCon.getInputStream();
+            }
+
         } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -159,7 +182,48 @@ public class ReportAPI {
     }
 
     public static List<IssueMarker> getListOfIssues(Box box) {
+        List<IssueMarker> listIssues = new LinkedList<>();
+        try {
+            String params = "";
+            URLConnection connection = new URL(GET_REPORTS_ADDRESS).openConnection();
+            connection.setDoOutput(true); //This is a post
+            connection.setRequestProperty("Accept-Charset", CHARSET);
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + CHARSET);
+            OutputStream output = connection.getOutputStream();
+            output.write(params.getBytes(CHARSET));
 
-        return null;
+            InputStream response = connection.getInputStream();
+
+            StringBuilder builder = new StringBuilder();
+            int character;
+            while ((character = response.read()) != -1) {
+                builder.append((char) character);
+            }
+            String text = builder.toString();
+            response.close();
+
+            JSONObject jObject = new JSONObject(text);
+
+            JSONArray values = jObject.getJSONArray("value");
+
+
+            for (int i = 0; i<values.length(); i++)
+            {
+                JSONObject val = values.getJSONObject(i);
+                IssueMarker issue = new IssueMarker(new LatLng(val.getDouble("latitude"),val.getDouble("longitude")), val.getString("name"), val.getString("description"));
+                Log.w("Ajout de Issue", issue.title);
+                listIssues.add(issue);
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return listIssues;
     }
 }
