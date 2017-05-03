@@ -33,7 +33,6 @@ import retrofit2.Response;
 public class DirectionsCalculator {
     private Vector<Poi> points;
     private EventBus events;
-    private boolean enabled;
 
     ////////////////////////////////////////////////////////////////////
     /////     Constructors, destructors and (un)initializators     /////
@@ -72,13 +71,8 @@ public class DirectionsCalculator {
         this.points.removeAllElements();
     }
 
-    public boolean isEnabled() {
-        return this.enabled;
-    }
-
     public boolean isReady() {
-        return this.isEnabled() &&
-                this.points.size() >= 2;
+        return this.points.size() >= 2;
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -86,11 +80,11 @@ public class DirectionsCalculator {
     ////////////////////////////////////////////////////////////////////
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public boolean calculateDirections(StartDirectionsCalculationEvent ev) {
+    public boolean calculateDirections(StartDirectionsCalculationEvent ev) throws ServicesException {
         if (!this.isReady()) {
             // TODO Error signalling
             events.post(new DoneCalculatingDirectionsEvent(null));
-            return false;
+            throw new RuntimeException("DirectionsCalculator not ready");
         }
 
         ArrayList<Position> pos = new ArrayList<>(this.points.size());
@@ -111,14 +105,15 @@ public class DirectionsCalculator {
         } catch (ServicesException e) {
             e.printStackTrace();
             // TODO Error signalling
-            events.post(new DoneCalculatingDirectionsEvent(null));
-            return false;
+            //events.post(new DoneCalculatingDirectionsEvent(null));
+            //return false;
+            throw new RuntimeException("Unable to build Directions getter");
         }
 
         if (client == null) {
             // TODO Error signalling
-            events.post(new DoneCalculatingDirectionsEvent(null));
-            return false;
+            //events.post(new DoneCalculatingDirectionsEvent(null));
+            throw new NullPointerException("Unable to build Directions getter");
         }
 
         client.enqueueCall(new Callback<DirectionsResponse>() {
@@ -139,7 +134,8 @@ public class DirectionsCalculator {
             @Override
             public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
                 // TODO Error signalling
-                events.post(new DoneCalculatingDirectionsEvent(null));
+                //events.post(new DoneCalculatingDirectionsEvent(null));
+                throw new RuntimeException("Failure on getting directions");
             }
         });
         return true;
