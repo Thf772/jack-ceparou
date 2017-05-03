@@ -102,6 +102,11 @@
             android:label="@string/offline_regions"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.activities.NewReportActivity"
+            android:label="Nouvel Incident"
+            android:screenOrientation="portrait" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -122,7 +127,6 @@
             android:name="io.fabric.ApiKey"
             android:value="fd3bf78e94fa9be288a9f662f853e9c8d6ce26c3" />
 
-        <activity android:name=".ui.activities.NewReportActivity"></activity>
     </application>
 
 </manifest>

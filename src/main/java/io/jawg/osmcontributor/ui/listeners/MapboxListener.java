@@ -250,7 +250,7 @@ public class MapboxListener {
      * @param marker
      */
     void onPoiMarkerClick(LocationMarkerView<Poi> marker) {
-        Bitmap bitmap = mapFragment.getBitmapHandler().getMarkerBitmap(marker.getRelatedObject().getType(), Poi.computeState(true, false, false));
+        Bitmap bitmap = mapFragment.getBitmapHandler().getMarkerBitmap(marker.getRelatedObject().getType(), Poi.computeState(true, false, false), marker.getRelatedObject().computeAccessibilityType());
         if (bitmap != null) {
             marker.setIcon(IconFactory.getInstance(mapFragment.getActivity()).fromBitmap(bitmap));
         }

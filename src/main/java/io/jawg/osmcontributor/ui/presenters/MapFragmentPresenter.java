@@ -259,7 +259,7 @@ public class MapFragmentPresenter {
         Bitmap bitmap;
         if (relatedObject instanceof Poi) {
             Poi poi = (Poi) relatedObject;
-            bitmap = mapFragment.getBitmapHandler().getMarkerBitmap(poi.getType(), Poi.computeState(selected, false, poi.getUpdated()));
+            bitmap = mapFragment.getBitmapHandler().getMarkerBitmap(poi.getType(), Poi.computeState(selected, false, poi.getUpdated()), poi.computeAccessibilityType());
         } else {
             Note note = (Note) relatedObject;
             bitmap = mapFragment.getBitmapHandler().getNoteBitmap(Note.computeState(note, selected, false));

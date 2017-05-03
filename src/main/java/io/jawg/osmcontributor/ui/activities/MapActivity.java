@@ -1,18 +1,18 @@
 /**
  * Copyright (C) 2016 eBusiness Information
- * <p>
+ *
  * This file is part of OSM Contributor.
- * <p>
+ *
  * OSM Contributor is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * <p>
+ *
  * OSM Contributor is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * <p>
+ *
  * You should have received a copy of the GNU General Public License
  * along with OSM Contributor.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -50,11 +50,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import com.mapbox.mapboxsdk.location.LocationServices;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.jawg.osmcontributor.BuildConfig;
 import io.jawg.osmcontributor.OsmTemplateApplication;
 import io.jawg.osmcontributor.R;
+import io.jawg.osmcontributor.model.entities.Poi;
 import io.jawg.osmcontributor.model.entities.PoiType;
 import io.jawg.osmcontributor.model.events.PleaseLoadPoiTypes;
 import io.jawg.osmcontributor.setting.activities.SettingsActivity;
@@ -65,6 +68,7 @@ import io.jawg.osmcontributor.ui.events.map.ChangeMapModeEvent;
 import io.jawg.osmcontributor.ui.events.map.ChangesInDB;
 import io.jawg.osmcontributor.ui.events.map.MapCenterValueEvent;
 import io.jawg.osmcontributor.ui.events.map.OnBackPressedMapEvent;
+import io.jawg.osmcontributor.ui.events.map.PleaseApplyAccessibilityFilter;
 import io.jawg.osmcontributor.ui.events.map.PleaseApplyNoteFilterEvent;
 import io.jawg.osmcontributor.ui.events.map.PleaseApplyPoiFilter;
 import io.jawg.osmcontributor.ui.events.map.PleaseChangeToolbarColor;
@@ -137,6 +141,8 @@ public class MapActivity extends AppCompatActivity implements NoticeDialogFragme
 
     private List<Long> poiTypesHidden;
 
+    private List<Poi.AccessibilityType> poiAccessibilityTypesHidden;
+
     private MenuItem selectAllMenuItem;
 
     private List<MenuItem> filtersItemList;
@@ -187,12 +193,17 @@ public class MapActivity extends AppCompatActivity implements NoticeDialogFragme
                 if (menuItem.getItemId() == R.id.select_all_item) {
                     selectAllMenuItem.setChecked(!selectAllMenuItem.isChecked());
                     onSelectAllClick();
-                } else if (menuItem.getItemId() != R.id.display_open_notes_item && menuItem.getItemId() != R.id.display_closed_notes_item) {
+                } else if (menuItem.getItemId() != R.id.display_open_notes_item
+                        && menuItem.getItemId() != R.id.display_closed_notes_item
+                        && menuItem.getItemId() != R.id.display_yes_accessibility
+                        && menuItem.getItemId() != R.id.display_limited_accessibility
+                        && menuItem.getItemId() != R.id.display_no_accessibility
+                        && menuItem.getItemId() != R.id.display_unknown_accessibility) {
                     menuItem.setChecked(!menuItem.isChecked());
                     onFilterItemClick(menuItem);
                 } else {
                     menuItem.setChecked(!menuItem.isChecked());
-                    onNoteItemClick(menuItem);
+                    onOtherItemClick(menuItem);
                 }
                 return true;
             }
@@ -230,6 +241,8 @@ public class MapActivity extends AppCompatActivity implements NoticeDialogFragme
 
         if (FlavorUtils.isBus()) {
             eventBus.post(new PleaseApplyNoteFilterEvent(false, false));
+            List<Poi.AccessibilityType> accessibilityTypesToHide = new ArrayList<>();
+            eventBus.post(new PleaseApplyAccessibilityFilter(accessibilityTypesToHide));
         }
         navigationView.getMenu().findItem(R.id.manage_poi_types).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -381,6 +394,7 @@ public class MapActivity extends AppCompatActivity implements NoticeDialogFragme
         List<PoiType> poiTypes = event.getPoiTypes();
 
         poiTypesHidden = event.getPoiTypeHidden();
+        poiAccessibilityTypesHidden = new ArrayList<>();
 
         filters.clear();
         for (PoiType poiType : poiTypes) {
@@ -437,6 +451,10 @@ public class MapActivity extends AppCompatActivity implements NoticeDialogFragme
 
             menu.findItem(R.id.display_open_notes_item).setChecked(displayOpenNotes);
             menu.findItem(R.id.display_closed_notes_item).setChecked(displayClosedNotes);
+            menu.findItem(R.id.display_yes_accessibility).setChecked(true);
+            menu.findItem(R.id.display_limited_accessibility).setChecked(true);
+            menu.findItem(R.id.display_no_accessibility).setChecked(true);
+            menu.findItem(R.id.display_unknown_accessibility).setChecked(true);
         } else {
             menu.removeItem(R.id.drawer_filter_notes_menu);
         }
@@ -551,6 +569,10 @@ public class MapActivity extends AppCompatActivity implements NoticeDialogFragme
             case R.id.contribute_menu:
                 startContributeActivity();
                 break;
+            case R.id.report:
+                startNewReportActivity();
+                break;
+
         }
     }
 
@@ -578,6 +600,7 @@ public class MapActivity extends AppCompatActivity implements NoticeDialogFragme
 
     private void startAboutActivity() {
         drawerLayout.closeDrawer(navigationView);
+
         Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
     }
@@ -597,6 +620,12 @@ public class MapActivity extends AppCompatActivity implements NoticeDialogFragme
         }
     }
 
+    private void startNewReportActivity() {
+        drawerLayout.closeDrawer(navigationView);
+        Intent intent = new Intent(this, NewReportActivity.class);
+        startActivity(intent);
+    }
+
     private void startProfileLoadingActivity() {
         drawerLayout.closeDrawer(navigationView);
         Intent intent = new Intent(this, LoadProfileActivity.class);
@@ -614,9 +643,9 @@ public class MapActivity extends AppCompatActivity implements NoticeDialogFragme
         eventBus.post(new PleaseDisplayTutorialEvent());
     }
 
-    private void onNoteItemClick(MenuItem menuItem) {
+    private void onOtherItemClick(MenuItem menuItem) {
         boolean checked = menuItem.isChecked();
-
+        Poi.AccessibilityType accessibilityType = null;
         switch (menuItem.getItemId()) {
             case R.id.display_open_notes_item:
                 displayOpenNotes = checked;
@@ -624,9 +653,30 @@ public class MapActivity extends AppCompatActivity implements NoticeDialogFragme
             case R.id.display_closed_notes_item:
                 displayClosedNotes = checked;
                 break;
+            case R.id.display_yes_accessibility:
+                accessibilityType = Poi.AccessibilityType.YES;
+                break;
+            case R.id.display_limited_accessibility:
+                accessibilityType = Poi.AccessibilityType.LIMITED;
+                break;
+            case R.id.display_no_accessibility:
+                accessibilityType = Poi.AccessibilityType.NO;
+                break;
+            case R.id.display_unknown_accessibility:
+                accessibilityType = Poi.AccessibilityType.UNKNOWN;
+                break;
         }
-
-        eventBus.post(new PleaseApplyNoteFilterEvent(displayOpenNotes, displayClosedNotes));
+        if (accessibilityType != null) {
+            if (checked) {
+                poiAccessibilityTypesHidden.remove(accessibilityType);
+            } else {
+                poiAccessibilityTypesHidden.add(accessibilityType);
+            }
+            eventBus.post(new PleaseApplyAccessibilityFilter(poiAccessibilityTypesHidden));
+        }
+        else {
+            eventBus.post(new PleaseApplyNoteFilterEvent(displayOpenNotes, displayClosedNotes));
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

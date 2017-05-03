@@ -19,9 +19,12 @@
 package io.jawg.osmcontributor.model.entities;
 
 
+import android.graphics.Bitmap;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
 import org.joda.time.DateTime;
@@ -30,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,11 +58,36 @@ public class Poi implements Cloneable, MapElement {
     public static final String TO_DELETE = "TO_DELETE";
     public static final String LEVEL = "LEVEL";
     public static final String POI_TYPE_ID = "POI_TYPE_ID";
+    public static final String POI_ACCESSIBILITY_TYPE_ID = "POI_ACCESSIBILITY_TYPE_ID";
     public static final String OLD = "OLD";
     public static final String OLD_POI_ID = "OLD_POI_ID";
 
+    public enum AccessibilityType {
+        YES, LIMITED, NO, UNKNOWN
+    }
+
     public enum State {
         NORMAL, SELECTED, MOVING, NOT_SYNCED
+    }
+
+    public AccessibilityType computeAccessibilityType() {
+        Collection<PoiTag> tags = this.getTags();
+        Iterator tagIt = tags.iterator();
+        while (tagIt.hasNext()) {
+            PoiTag tag = (PoiTag) tagIt.next();
+            boolean hasAccessibilityInfo = tag.getKey().equals("wheelchair");
+            if (hasAccessibilityInfo) {
+                switch (tag.getValue()) {
+                    case "yes":
+                        return AccessibilityType.YES;
+                    case "limited":
+                        return AccessibilityType.LIMITED;
+                    case "no":
+                        return AccessibilityType.NO;
+                }
+            }
+        }
+        return AccessibilityType.UNKNOWN;
     }
 
     public static State computeState(boolean selected, boolean edition, boolean needsSync) {

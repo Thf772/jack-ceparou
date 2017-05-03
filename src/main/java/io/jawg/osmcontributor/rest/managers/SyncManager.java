@@ -29,6 +29,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import io.jawg.osmcontributor.api.IssueMarker;
+import io.jawg.osmcontributor.api.ReportAPI;
 import io.jawg.osmcontributor.ui.managers.PoiManager;
 import io.jawg.osmcontributor.database.dao.PoiDao;
 import io.jawg.osmcontributor.database.dao.PoiTypeDao;
@@ -93,10 +95,17 @@ public class SyncManager {
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onSyncDownloadPoisAndNotesEvent(SyncDownloadPoisAndNotesEvent event) {
         syncDownloadPoiBox(event.getBox());
+
+        syncDownloadIssuesBox(event.getBox());
+
         List<Note> notes = syncNoteManager.syncDownloadNotesInBox(event.getBox());
         if (notes != null && notes.size() > 0) {
             noteManager.mergeBackendNotes(notes);
         }
+        //TODO add request to our own little system
+
+
+
         bus.post(new PoisAndNotesDownloadedEvent());
     }
 
@@ -186,6 +195,8 @@ public class SyncManager {
         }
 
         List<Poi> pois = backend.getPoisInBox(box);
+
+
         if (pois.size() > 0) {
             Timber.d("Updating %d nodes", pois.size());
             poiManager.mergeFromOsmPois(pois, box);
@@ -193,6 +204,17 @@ public class SyncManager {
             Timber.d("No new node found in the area");
         }
     }
+
+    /**
+     * Dowloads all the issues from our specific database that fit inside the Box
+     * @param box
+     */
+    private void syncDownloadIssuesBox(Box box) {
+        //TODO
+        List<IssueMarker> issuesMarkers = ReportAPI.getListOfIssues(box);
+    }
+
+
 
     /**
      * Send in a unique changeSet all the new POIs, modified and suppressed ones from ids send in params.

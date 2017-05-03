@@ -3,4 +3,5 @@
 
     <string name="name" translatable="false">Jack Céparou</string>
     <string name="mapsquare" translatable="false"><![CDATA[<font color=\"#ffffff\">By INSA Lyon </font><font color=\"#2196f3\">IF/4112</font>]]></string>
+    <string name="report" translatable="false">Signaler un problème</string>
 </resources>

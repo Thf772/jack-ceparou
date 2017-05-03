@@ -75,8 +75,11 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -91,9 +94,11 @@ import butterknife.Unbinder;
 import io.jawg.osmcontributor.BuildConfig;
 import io.jawg.osmcontributor.OsmTemplateApplication;
 import io.jawg.osmcontributor.R;
+import io.jawg.osmcontributor.api.IssueMarker;
 import io.jawg.osmcontributor.model.entities.Note;
 import io.jawg.osmcontributor.model.entities.Poi;
 import io.jawg.osmcontributor.model.entities.PoiNodeRef;
+import io.jawg.osmcontributor.model.entities.PoiTag;
 import io.jawg.osmcontributor.model.entities.PoiType;
 import io.jawg.osmcontributor.model.entities.PoiTypeTag;
 import io.jawg.osmcontributor.model.entities.Way;
@@ -121,6 +126,7 @@ import io.jawg.osmcontributor.ui.events.map.MapCenterValueEvent;
 import io.jawg.osmcontributor.ui.events.map.NewNoteCreatedEvent;
 import io.jawg.osmcontributor.ui.events.map.NewPoiTypeSelected;
 import io.jawg.osmcontributor.ui.events.map.OnBackPressedMapEvent;
+import io.jawg.osmcontributor.ui.events.map.PleaseApplyAccessibilityFilter;
 import io.jawg.osmcontributor.ui.events.map.PleaseApplyNoteFilterEvent;
 import io.jawg.osmcontributor.ui.events.map.PleaseApplyPoiFilter;
 import io.jawg.osmcontributor.ui.events.map.PleaseChangePoiPosition;
@@ -196,6 +202,8 @@ public class MapFragment extends Fragment {
     private Map<Long, LocationMarkerViewOptions<Note>> markersNotes;
     private Map<Long, WayMarkerOptions> markersNodeRef;
 
+    private List<IssueMarker> markerIssues; //Our custom markers
+
     private int maxPoiType;
     private PoiType poiTypeSelected;
     private ButteryProgressBar progressBar;
@@ -257,6 +265,7 @@ public class MapFragment extends Fragment {
         markersPoi = new HashMap<>();
         markersNotes = new HashMap<>();
         markersNodeRef = new HashMap<>();
+        markerIssues = new LinkedList<>();
 
         unbinder = ButterKnife.bind(this, rootView);
         setHasOptionsMenu(true);
@@ -603,7 +612,7 @@ public class MapFragment extends Fragment {
                 newPoiPosition = mapboxMap.getCameraPosition().target;
                 eventBus.post(new PleaseApplyPoiPositionChange(newPoiPosition, poi.getId()));
                 markerSelected.setPosition(newPoiPosition);
-                markerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, true))));
+                markerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, true), poi.computeAccessibilityType())));
                 poi.setUpdated(true);
                 mapboxMap.updateMarker(markerSelected);
                 switchMode(MapMode.DETAIL_POI);
@@ -849,7 +858,7 @@ public class MapFragment extends Fragment {
             switch (markerSelected.getType()) {
                 case POI:
                     Poi poi = (Poi) markerSelected.getRelatedObject();
-                    bitmap = bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, poi.getUpdated()));
+                    bitmap = bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, poi.getUpdated()), poi.computeAccessibilityType());
                     break;
 
                 case NOTE:
@@ -1782,12 +1791,20 @@ public class MapFragment extends Fragment {
     *---------------------------------------------------------*/
 
     private List<Long> poiTypeHidden = new ArrayList<>();
+    private List<Poi.AccessibilityType> poiAccessibilityTypeHidden = new ArrayList<>();
 
     private boolean displayOpenNotes = true;
     private boolean displayClosedNotes = true;
 
     public List<Long> getPoiTypeHidden() {
         return poiTypeHidden;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPleaseApplyAccessibilityFilter(PleaseApplyAccessibilityFilter event) {
+        Timber.d("filtering Pois by accessibility");
+        poiAccessibilityTypeHidden = event.getAccessibilityTypesToHide();
+        applyAccessibilityFilter();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -1819,6 +1836,28 @@ public class MapFragment extends Fragment {
         }
     }
 
+    public void applyAccessibilityFilter() {
+        Timber.d("Display Colored POI with accessibility-associated color");
+
+        // Color the POI
+        Iterator it = markersPoi.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            LocationMarkerViewOptions<Poi> lmvo = (LocationMarkerViewOptions<Poi>) pair.getValue();
+            Marker marker = lmvo.getMarker();
+            Poi poi = lmvo.getRelatedObject();
+            Bitmap bitmap = bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, poi.getUpdated()), poi.computeAccessibilityType());
+            if (bitmap != null) {
+                marker.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmap));
+            }
+        }
+
+        for (LocationMarkerViewOptions marker : markersPoi.values()) {
+            removeMarkerView(marker);
+            addPoiMarkerDependingOnFilters(marker);
+        }
+    }
+
     private void addNoteMarkerDependingOnFilters(LocationMarkerViewOptions<Note> markerOption) {
         Note note = markerOption.getMarker().getRelatedObject();
 
@@ -1833,7 +1872,10 @@ public class MapFragment extends Fragment {
     private void addPoiMarkerDependingOnFilters(LocationMarkerViewOptions<Poi> markerOption) {
         Poi poi = markerOption.getMarker().getRelatedObject();
         //if we are in vectorial mode we hide all poi not at the current level
-        if (poi.getType() != null && !poiTypeHidden.contains(poi.getType().getId()) && (!isVectorial || poi.isAtLevel(currentLevel) || !poi.isOnLevels(levelBar.getLevels()))) {
+        if (poi.getType() != null
+                && !poiTypeHidden.contains(poi.getType().getId())
+                && !poiAccessibilityTypeHidden.contains(poi.computeAccessibilityType())
+                && (!isVectorial || poi.isAtLevel(currentLevel)|| !poi.isOnLevels(levelBar.getLevels()))) {
             mapboxMap.addMarker(markerOption);
         } else if (mapMode.equals(MapMode.DETAIL_POI) && ((Poi) markerSelected.getRelatedObject()).getId().equals(poi.getId())) {
             //if the poi selected is hidden close the detail mode
