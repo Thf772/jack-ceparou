@@ -1,5 +1,12 @@
 package io.jawg.osmcontributor.api;
 
+import android.util.Log;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import io.jawg.osmcontributor.model.event.CreateNewReportEvent;
+
 /**
  * This class provides the methods to call our own API the report issues via the application
  */
@@ -11,10 +18,10 @@ public class ReportAPI {
 
     /**
      * This method will call the server and create a new report.
-     * @return
      */
-    public static void createNewReport(String title, String details, String imageFilePath)
+    @@Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onCreateNewReport(CreateNewReportEvent event)
     {
-        //TODO implement
+        Log.w("REPORT API", "Event to create report carried succsessfully");
     }
 }

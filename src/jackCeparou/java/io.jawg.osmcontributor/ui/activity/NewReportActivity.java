@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,6 +27,7 @@ import java.util.Date;
 import io.jawg.osmcontributor.api.ReportAPI;
 
 import io.jawg.osmcontributor.R;
+import io.jawg.osmcontributor.model.event.CreateNewReportEvent;
 
 import static android.provider.MediaStore.ACTION_IMAGE_CAPTURE;
 
@@ -32,10 +35,16 @@ public class NewReportActivity extends AppCompatActivity {
 
     ImageCapture imageCapture;
     String imageFilePath;
+    ReportAPI reportAPI;
+    EventBus eventBus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        eventBus = EventBus.getDefault();
+        reportAPI = new ReportAPI();
+        eventBus.register(reportAPI);
 
         imageCapture = new ImageCapture(this);
         View.OnClickListener sendButtonListener = new SendReport(this);
@@ -169,8 +178,9 @@ public class NewReportActivity extends AppCompatActivity {
                 String issueTitle =  title.getText().toString();
                 String issueDescription = description.getText().toString();
 
-                ReportAPI.createNewReport(issueTitle, issueDescription, imageFilePath);
+                CreateNewReportEvent event = new CreateNewReportEvent(issueTitle, issueDescription, 0.0, 0.0, imageFilePath);
 
+                eventBus.post(event);   //The event is posted, it will be carried to the ReportAPI class
             } else {   //TODO Kindky ask the user to give a title to its new issue
 
                 final EditText title = (EditText) findViewById(R.id.IssueName);
