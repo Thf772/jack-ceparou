@@ -13,14 +13,12 @@ import org.greenrobot.eventbus.EventBus;
 public class DirectionsCalculator {
     private Position origin;
     private Position destination;
-    private boolean isOriginSet;
     private EventBus events;
 
 
     public DirectionsCalculator(EventBus events) {
         this.origin = null;
         this.destination = null;
-        this.isOriginSet = false;
         this.events = events;
         this.enable();
     }
