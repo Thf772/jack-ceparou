@@ -616,7 +616,8 @@ public class MapActivity extends AppCompatActivity implements NoticeDialogFragme
         super.onActivityResult(requestCode, resultCode, intent);
 
         if (requestCode == SETTING_ACTIVITY) {
-            recreate(); // your "refresh" code
+            finish();
+            startActivity(getIntent());
         }
     }
 

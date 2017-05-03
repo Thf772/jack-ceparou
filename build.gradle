@@ -124,7 +124,7 @@ android {
         debug {
             versionNameSuffix ".debug-3"
             debuggable true
-            buildConfigField "String", "BASE_OSM_URL", '"http://api06.dev.openstreetmap.org/api/0.6/"'
+            buildConfigField "String", "BASE_OSM_URL", '"http://api.openstreetmap.org/api/0.6"'
         }
     }
 
