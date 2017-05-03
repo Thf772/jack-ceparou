@@ -263,5 +263,18 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"/>
 
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/validate_route_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_check_grey600_24dp"
+            app:fab_colorNormal="@color/floating_ab_normal"
+            app:fab_colorPressed="@color/floating_ab_pressed"
+            app:fab_colorRipple="@color/floating_ab_ripple"
+            android:layout_above="@+id/route_mode_button"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:visibility="gone"/>
+
     </RelativeLayout>
 </RelativeLayout>

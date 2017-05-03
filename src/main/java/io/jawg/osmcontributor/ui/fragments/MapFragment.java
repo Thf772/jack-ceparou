@@ -119,6 +119,7 @@ import io.jawg.osmcontributor.ui.events.edition.PleaseApplyNodeRefPositionChange
 import io.jawg.osmcontributor.ui.events.edition.PleaseApplyPoiPositionChange;
 import io.jawg.osmcontributor.ui.events.map.AddressFoundEvent;
 import io.jawg.osmcontributor.ui.events.map.ChangeMapModeEvent;
+import io.jawg.osmcontributor.ui.events.map.DoneCalculatingDirectionsEvent;
 import io.jawg.osmcontributor.ui.events.map.EditionWaysLoadedEvent;
 import io.jawg.osmcontributor.ui.events.map.LastUsePoiTypeLoaded;
 import io.jawg.osmcontributor.ui.events.map.MapCenterValueEvent;
@@ -149,6 +150,7 @@ import io.jawg.osmcontributor.ui.events.map.PleaseToggleArpiEvent;
 import io.jawg.osmcontributor.ui.events.map.PleaseToggleDrawer;
 import io.jawg.osmcontributor.ui.events.map.PleaseToggleDrawerLock;
 import io.jawg.osmcontributor.ui.events.map.PoiNoTypeCreated;
+import io.jawg.osmcontributor.ui.events.map.StartDirectionsCalculationEvent;
 import io.jawg.osmcontributor.ui.events.note.ApplyNewCommentFailedEvent;
 import io.jawg.osmcontributor.ui.listeners.MapboxListener;
 import io.jawg.osmcontributor.ui.listeners.OnZoomAnimationFinishedListener;
@@ -166,6 +168,7 @@ import io.jawg.osmcontributor.ui.utils.views.map.marker.LocationMarkerViewOption
 import io.jawg.osmcontributor.ui.utils.views.map.marker.WayMarker;
 import io.jawg.osmcontributor.ui.utils.views.map.marker.WayMarkerOptions;
 import io.jawg.osmcontributor.utils.ConfigManager;
+import io.jawg.osmcontributor.utils.DirectionsCalculator;
 import io.jawg.osmcontributor.utils.FlavorUtils;
 import io.jawg.osmcontributor.utils.OsmAnswers;
 import io.jawg.osmcontributor.utils.StringUtils;
@@ -246,6 +249,8 @@ public class MapFragment extends Fragment {
     @BindView(R.id.zoom_level)
     TextView zoomLevelText;
 
+    private DirectionsCalculator dc;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -256,6 +261,8 @@ public class MapFragment extends Fragment {
 
         presenter = new MapFragmentPresenter(this);
         mapboxListener = new MapboxListener(this, eventBus);
+
+        dc = new DirectionsCalculator(eventBus);
     }
 
     @Override
@@ -1498,6 +1505,9 @@ public class MapFragment extends Fragment {
     @BindView(R.id.route_mode_button)
     FloatingActionButton route_mode_button;
 
+    @BindView(R.id.validate_route_button)
+    FloatingActionButton validate_route_button;
+
     @OnClick(R.id.route_mode_button)
     public void toggleRouteMode()
     {
@@ -1505,13 +1515,23 @@ public class MapFragment extends Fragment {
 
         if (route_mode)
         {
+            validate_route_button.setVisibility(View.VISIBLE);
             selectedPois.clear();
             Log.w("Route mode", "ok");
         }
         else
         {
-            Log.w("Selected POIS", String.valueOf(selectedPois.size()));
+            validate_route_button.setVisibility(View.GONE);
         }
+    }
+
+    @OnClick(R.id.validate_route_button)
+    public void validateRoute()
+    {
+        Log.w("Selected POIS", String.valueOf(selectedPois.size()));
+        dc.setPoints(selectedPois);
+        StartDirectionsCalculationEvent startEvent = new StartDirectionsCalculationEvent(selectedPois);
+        eventBus.post(startEvent);
     }
 
     @Subscribe
@@ -1537,9 +1557,10 @@ public class MapFragment extends Fragment {
         }
     }
 
-    public List<Poi> getSelectedPois()
+    @Subscribe
+    public void onDirectionCalculationDone(DoneCalculatingDirectionsEvent event)
     {
-        return selectedPois;
+        Log.w("Directions", "ok");
     }
 
     /*-----------------------------------------------------------
