@@ -1537,6 +1537,11 @@ public class MapFragment extends Fragment {
         }
     }
 
+    public List<Poi> getSelectedPois()
+    {
+        return selectedPois;
+    }
+
     /*-----------------------------------------------------------
     * MAP UTILS
     *---------------------------------------------------------*/
