@@ -67,9 +67,7 @@ public class NewReportActivity extends AppCompatActivity {
         //Open the camera to take a picture
 
         imageView.setOnClickListener(imageCapture);
-        imageView.performClick();
-
-
+        imageCapture.onClick(imageView);
     }
 
 
@@ -88,7 +86,7 @@ public class NewReportActivity extends AppCompatActivity {
             try {
                 FileInputStream imageStored = new FileInputStream(imageFilePath);
                 Bitmap bitmapImage = BitmapFactory.decodeStream(imageStored);
-
+                imageView.setImageDrawable(null);
                 imageView.setImageBitmap(bitmapImage);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

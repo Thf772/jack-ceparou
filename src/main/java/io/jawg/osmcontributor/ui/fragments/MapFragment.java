@@ -79,6 +79,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -93,6 +94,7 @@ import butterknife.Unbinder;
 import io.jawg.osmcontributor.BuildConfig;
 import io.jawg.osmcontributor.OsmTemplateApplication;
 import io.jawg.osmcontributor.R;
+import io.jawg.osmcontributor.api.IssueMarker;
 import io.jawg.osmcontributor.model.entities.Note;
 import io.jawg.osmcontributor.model.entities.Poi;
 import io.jawg.osmcontributor.model.entities.PoiNodeRef;
@@ -199,6 +201,8 @@ public class MapFragment extends Fragment {
     private Map<Long, LocationMarkerViewOptions<Note>> markersNotes;
     private Map<Long, WayMarkerOptions> markersNodeRef;
 
+    private List<IssueMarker> markerIssues; //Our custom markers
+
     private int maxPoiType;
     private PoiType poiTypeSelected;
     private ButteryProgressBar progressBar;
@@ -260,6 +264,7 @@ public class MapFragment extends Fragment {
         markersPoi = new HashMap<>();
         markersNotes = new HashMap<>();
         markersNodeRef = new HashMap<>();
+        markerIssues = new LinkedList<>();
 
         unbinder = ButterKnife.bind(this, rootView);
         setHasOptionsMenu(true);
