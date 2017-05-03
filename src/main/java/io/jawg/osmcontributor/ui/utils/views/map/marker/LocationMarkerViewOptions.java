@@ -123,5 +123,9 @@ public class LocationMarkerViewOptions<T> extends BaseMarkerViewOptions<Location
             markerType = LocationMarkerView.MarkerType.NONE;
         }
     }
+
+    public T getRelatedObject() {
+        return relatedObject;
+    }
 }
 

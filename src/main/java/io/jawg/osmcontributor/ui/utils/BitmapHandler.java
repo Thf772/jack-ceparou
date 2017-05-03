@@ -284,6 +284,93 @@ public class BitmapHandler {
     }
 
     /**
+     * Handle Bitmap load, storage and retrieval for MapFragment.
+     * <br/>
+     * Put the marker corresponding to a poiType into a color pin. The color depends of the poi's state.
+     *
+     * @param poiType The PoiType of the desired bitmap.
+     * @param state   State of the Poi.
+     * @param accessibilityState Accessibility state of the Poi.
+     * @return The marker corresponding to the poiType and the poi state.
+     */
+    public Bitmap getMarkerBitmap(PoiType poiType, Poi.State state, char accessibilityState) {
+
+        try {
+
+            Integer markerId = null;
+            Integer iconId = getIconDrawableId(poiType);
+
+
+            Bitmap markerWrapper;
+            Bitmap icon;
+
+            // 3 states, n-pois -> 3 x n bitmaps.
+            // Two choices: either we store all overlay combinations, or we store the markers and always process overlays.
+            // As there might be more POIs than the number of combinations, I chose to store all combinations.
+
+            switch (state) {
+                case NORMAL:
+                    markerId = R.drawable.marker_white;
+                    break;
+                case NOT_SYNCED:
+                    markerId = R.drawable.marker_grey;
+                    break;
+                case SELECTED:
+                    markerId = R.drawable.marker_blue;
+                    break;
+                case MOVING:
+                    markerId = R.drawable.marker_red;
+                    break;
+            }
+
+            // 4 accessibility states :
+            switch (accessibilityState) {
+                case 'Y':
+                    markerId = R.drawable.marker_true_green;
+                    break;
+                case 'N':
+                    markerId = R.drawable.marker_true_red;
+                    break;
+                case 'B':
+                    markerId = R.drawable.marker_true_orange;
+                    break;
+                case 'U':
+                    markerId = R.drawable.marker_true_grey;
+                    break;
+            }
+
+            String bitmapCacheId = markerId.toString() + iconId.toString();
+
+            // Try to retrieve bmOverlay from cache
+            Bitmap bmOverlay = getBitmapFromMemCache(bitmapCacheId);
+
+            // If we don't have the combination into memory yet, compute it manually
+            if (bmOverlay == null) {
+
+                // If still too slow (lots of sources), we might change this and also include partials into cache
+                // Right now, I don't think the use case proves its usefulness
+                markerWrapper = BitmapFactory.decodeResource(context.getResources(), markerId);
+                icon = BitmapFactory.decodeResource(context.getResources(), iconId);
+
+                bmOverlay = Bitmap.createBitmap(markerWrapper.getWidth(), markerWrapper.getHeight(), markerWrapper.getConfig());
+                Canvas canvas = new Canvas(bmOverlay);
+
+                int x = markerWrapper.getWidth() / 2 - icon.getWidth() / 2;
+                int y = markerWrapper.getHeight() / 2 - icon.getHeight() / 2 - (int) (0.05 * markerWrapper.getHeight());
+
+                canvas.drawBitmap(markerWrapper, 0, 0, null);
+                canvas.drawBitmap(icon, x, y, null);
+                addBitmapToMemoryCache(bitmapCacheId, bmOverlay);
+            }
+
+            return bmOverlay;
+
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /**
      * Get the white icon corresponding to a poiType.
      *
      * @param poiType the PoiType or null for notes.
@@ -439,5 +526,24 @@ public class BitmapHandler {
             }
         }
         return iconId != 0 ? iconId : R.drawable.default_osm_marker;
+    }
+
+    // hue-range: [0, 360] -> Default = 0
+    public static Bitmap hue(Bitmap bitmap, float hue) {
+        Bitmap newBitmap = bitmap.copy(bitmap.getConfig(), true);
+        final int width = newBitmap.getWidth();
+        final int height = newBitmap.getHeight();
+        float [] hsv = new float[3];
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int pixel = newBitmap.getPixel(x, y);
+                Color.colorToHSV(pixel, hsv);
+                hsv[0] = hue;
+                newBitmap.setPixel(x, y, Color.HSVToColor(Color.alpha(pixel), hsv));
+            }
+        }
+
+        return newBitmap;
     }
 }
