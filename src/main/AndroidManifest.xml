@@ -34,7 +34,7 @@
         android:name=".OsmTemplateApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
-        android:icon="@mipmap/icon"
+        android:icon="@drawable/logo"
         android:label="@string/name"
         android:theme="@style/AppTheme"
         tools:replace="android:label">

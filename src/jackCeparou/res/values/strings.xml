@@ -2,5 +2,5 @@
 <resources>
 
     <string name="name" translatable="false">Jack Céparou</string>
-    <string name="mapsquare" translatable="false"><![CDATA[By INSA Lyon <font color=\"#2196f3\">IF/4112</font>]]></string>
+    <string name="mapsquare" translatable="false"><![CDATA[<font color=\"#ffffff\">By INSA Lyon </font><font color=\"#2196f3\">IF/4112</font>]]></string>
 </resources>
