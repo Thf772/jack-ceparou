@@ -83,7 +83,7 @@ public class DirectionsCalculator {
     public boolean calculateDirections(StartDirectionsCalculationEvent ev) throws ServicesException {
         if (!this.isReady()) {
             // TODO Error signalling
-            events.post(new DoneCalculatingDirectionsEvent(null));
+            //events.post(new DoneCalculatingDirectionsEvent(null));
             throw new RuntimeException("DirectionsCalculator not ready");
         }
 
