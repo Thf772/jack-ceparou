@@ -5,6 +5,7 @@ import com.mapbox.services.commons.models.Position;
 import com.mapbox.services.directions.v5.DirectionsCriteria;
 import com.mapbox.services.directions.v5.MapboxDirections;
 import com.mapbox.services.directions.v5.models.DirectionsResponse;
+import com.mapbox.services.directions.v5.models.DirectionsRoute;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -32,6 +33,8 @@ public class DirectionsCalculator {
     private EventBus events;
     private boolean enabled;
 
+    private DirectionsRoute route;
+
     ////////////////////////////////////////////////////////////////////
     /////     Constructors, destructors and (un)initializators     /////
     ////////////////////////////////////////////////////////////////////
@@ -40,6 +43,7 @@ public class DirectionsCalculator {
         this.origin = null;
         this.destination = null;
         this.events = events;
+        this.route = null;
         this.enable();
     }
 
@@ -70,12 +74,20 @@ public class DirectionsCalculator {
         return this.destination;
     }
 
+    public DirectionsRoute getRoute() {
+        return this.route;
+    }
+
     public void setOrigin(Position pos){
         this.origin = pos;
     }
 
     public void setDestination(Position pos) {
         this.destination = pos;
+    }
+
+    public void setRoute(DirectionsRoute route) {
+        this.route = route;
     }
 
     public boolean isEnabled() {
@@ -88,16 +100,20 @@ public class DirectionsCalculator {
                 this.destination != null;
     }
 
+    public boolean isCalculated() {
+        return this.route != null;
+    }
+
     ////////////////////////////////////////////////////////////////////
     /////     Events                                               /////
     ////////////////////////////////////////////////////////////////////
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.POSTING)
     public void onOriginSelectedEvent(OriginSelectedEvent e) {
         this.setOrigin(e.getPosition());
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.POSTING)
     public void onDestinationSelectedEvent(DestinationSelectedEvent e) {
         this.setDestination(e.getPosition());
     }
@@ -105,6 +121,12 @@ public class DirectionsCalculator {
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onStartDirectionsCalculationEvent(StartDirectionsCalculationEvent e) {
         this.calculateDirections();
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onDirectionsCalculationResponseEvent(DirectionsCalculationResponseEvent e) {
+        this.setRoute(e.getRoute());
+        this.checkWheelchairFriendliness();
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -123,6 +145,7 @@ public class DirectionsCalculator {
                     .setAccessToken(BuildConfig.MAPBOX_TOKEN)
                     .build();
         } catch (ServicesException e) {
+            // TODO Error signalling
             e.printStackTrace();
             return;
         }
@@ -147,5 +170,8 @@ public class DirectionsCalculator {
         });
     }
 
+    public void checkWheelchairFriendliness() {
+        // TODO identify OSM routes
+    }
 
 }
