@@ -1,6 +1,5 @@
 package io.jawg.osmcontributor.utils;
 
-import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.services.commons.models.Position;
 import com.mapbox.services.directions.v5.DirectionsCriteria;
 import com.mapbox.services.directions.v5.MapboxDirections;
@@ -9,6 +8,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import io.jawg.osmcontributor.BuildConfig;
 import io.jawg.osmcontributor.ui.events.map.DestinationSelectedEvent;
 import io.jawg.osmcontributor.ui.events.map.OriginSelectedEvent;
 import io.jawg.osmcontributor.ui.events.map.StartDirectionsCalculationEvent;
@@ -111,7 +111,7 @@ public class DirectionsCalculator {
                 .setDestination(this.getDestination())
                 .setOverview(DirectionsCriteria.OVERVIEW_FULL)
                 .setProfile(DirectionsCriteria.PROFILE_WALKING)
-                .setAccessToken(Mapbox.getAccessToken());
+                .setAccessToken(BuildConfig.MAPBOX_TOKEN);
 
     }
 
