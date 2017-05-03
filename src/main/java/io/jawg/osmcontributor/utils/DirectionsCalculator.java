@@ -79,7 +79,7 @@ public class DirectionsCalculator {
     /////     Events                                               /////
     ////////////////////////////////////////////////////////////////////
 
-    @Subscribe(threadMode = ThreadMode.ASYNC)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public boolean calculateDirections(StartDirectionsCalculationEvent ev) throws ServicesException {
         if (!this.isReady()) {
             // TODO Error signalling

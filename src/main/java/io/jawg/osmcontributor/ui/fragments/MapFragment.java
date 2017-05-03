@@ -1557,7 +1557,7 @@ public class MapFragment extends Fragment {
         }
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDirectionCalculationDone(DoneCalculatingDirectionsEvent event)
     {
         Log.w("Directions", "ok");
