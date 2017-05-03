@@ -3,23 +3,30 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="com.hackaton4if.h4112.jack_ceparou.SettingsActivity$GeneralPreferenceFragment"
-        android:icon="@drawable/ic_info_black_24dp"
+        android:fragment="io.jawg.osmcontributor.setting.fragment.GeneralPreferenceFragment"
+        android:icon="@drawable/alert_circle"
         android:title="@string/pref_header_general" />
 
     <header
-        android:fragment="com.hackaton4if.h4112.jack_ceparou.SettingsActivity$AccessibilityFragment"
-        android:icon="@drawable/accessibility_black_24x24"
+        android:fragment="io.jawg.osmcontributor.setting.fragment.AccessibilityFragment"
+        android:icon="@drawable/human"
         android:title="@string/pref_header_accessibilty" />
 
     <header
-        android:fragment="com.hackaton4if.h4112.jack_ceparou.SettingsActivity$NotificationPreferenceFragment"
-        android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/pref_header_notifications" />
+        android:fragment="io.jawg.osmcontributor.setting.fragment.ConnectionFragment"
+        android:icon="@drawable/account_settings_variant"
+        android:title="@string/pref_header_Compte" />
 
     <header
-        android:fragment="com.hackaton4if.h4112.jack_ceparou.SettingsActivity$DataSyncPreferenceFragment"
-        android:icon="@drawable/ic_sync_black_24dp"
+        android:fragment="io.jawg.osmcontributor.setting.fragment.DataSyncPreferenceFragment"
+        android:icon="@drawable/sync"
         android:title="@string/pref_header_data_sync" />
+
+    <header
+        android:fragment="io.jawg.osmcontributor.setting.fragment.NotificationPreferenceFragment"
+        android:icon="@drawable/bell"
+        android:title="@string/pref_header_notifications" />
+
+
 
 </preference-headers>

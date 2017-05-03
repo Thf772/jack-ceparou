@@ -3,7 +3,6 @@ package io.jawg.osmcontributor.setting.activities;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -12,18 +11,27 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 
 import java.util.List;
 
-import io.jawg.osmcontributor.Application;
+import butterknife.BindView;
+import io.jawg.osmcontributor.OsmTemplateApplication;
 import io.jawg.osmcontributor.R;
+import io.jawg.osmcontributor.setting.fragment.AccessibilityFragment;
+import io.jawg.osmcontributor.setting.fragment.ConnectionFragment;
+import io.jawg.osmcontributor.setting.fragment.DataSyncPreferenceFragment;
+import io.jawg.osmcontributor.setting.fragment.GeneralPreferenceFragment;
+import io.jawg.osmcontributor.setting.fragment.NotificationPreferenceFragment;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 /**
@@ -37,7 +45,10 @@ import io.jawg.osmcontributor.R;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class SettingsActivity extends AppCompatPreferenceActivity{
+public class SettingsActivity extends AppCompatPreferenceActivity {
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     /**
      * A preference value change listener that updates the preference's summary
@@ -114,7 +125,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity{
      *
      * @see #sBindPreferenceSummaryToValueListener
      */
-    private static void bindPreferenceSummaryToValue(Preference preference) {
+    public static void bindPreferenceSummaryToValue(Preference preference) {
         // Set the listener to watch for value changes.
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
@@ -128,8 +139,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Application.init(this);
+        ((OsmTemplateApplication) getApplication()).init(this);
         super.onCreate(savedInstanceState);
+        LinearLayout root =
+                (LinearLayout) findViewById(android.R.id.list).getParent().getParent().getParent();
+        Toolbar toolbar = (Toolbar) LayoutInflater.from(this).inflate(R.layout.toolbar_layout, root, false);
+        root.addView(toolbar, 0);
+//        ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+
         setupActionBar();
     }
 
@@ -155,15 +174,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity{
         int id = item.getItemId();
         if (id == android.R.id.home) {
             //NavUtils.navigateUpFromSameTask(this);
-                onBackPressed();
+            onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         super.onBackPressed();  // optional depending on your needs
     }
 
@@ -193,216 +211,31 @@ public class SettingsActivity extends AppCompatPreferenceActivity{
                 || GeneralPreferenceFragment.class.getName().equals(fragmentName)
                 || DataSyncPreferenceFragment.class.getName().equals(fragmentName)
                 || NotificationPreferenceFragment.class.getName().equals(fragmentName)
+                || ConnectionFragment.class.getName().equals(fragmentName)
                 || AccessibilityFragment.class.getName().equals(fragmentName);
     }
 
-    /**
-     * This fragment shows general preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class GeneralPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_general);
-            setHasOptionsMenu(true);
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            bindPreferenceSummaryToValue(findPreference("display_name"));
-            bindPreferenceSummaryToValue(findPreference("langage_list"));
-        }
-
-        @Override
-        public void onResume() {
-            super.onResume();
-            getPreferenceScreen().getSharedPreferences()
-                    .registerOnSharedPreferenceChangeListener(this);
-        }
-
-        @Override
-        public void onPause() {
-            super.onPause();
-            getPreferenceScreen().getSharedPreferences()
-                    .unregisterOnSharedPreferenceChangeListener(this);
-        }
-
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-
-        }
+    public void startSync() {
+        ((OsmTemplateApplication) getApplication()).startRepeatingTask();
     }
 
-    /**
-     * This fragment shows notification preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class NotificationPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_notification);
-            setHasOptionsMenu(true);
-
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
-        }
-
-        @Override
-        public void onResume() {
-            super.onResume();
-            getPreferenceScreen().getSharedPreferences()
-                    .registerOnSharedPreferenceChangeListener(this);
-        }
-
-        @Override
-        public void onPause() {
-            super.onPause();
-            getPreferenceScreen().getSharedPreferences()
-                    .unregisterOnSharedPreferenceChangeListener(this);
-        }
-
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            switch(String.valueOf(key))
-            {
-                case "notifications_new_report":
-                    boolean syncEnable = sharedPreferences.getBoolean("notifications_new_report", true);
-                    Application.setNotificationOn(syncEnable);
-                    break;
-                case "notifications_new_message_vibrate":
-                    boolean vibrationEnable = sharedPreferences.getBoolean("notifications_new_message_vibrate", true);
-                    Application.setVibrationAllow(vibrationEnable);
-                    break;
-                default :
-
-                break;
-
-            }
-        }
+    public void setmInterval(int freq) {
+        ((OsmTemplateApplication) getApplication()).setmInterval(freq);
     }
 
-    /**
-     * This fragment shows data and sync preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class DataSyncPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener{
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_data_sync);
-            setHasOptionsMenu(true);
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            bindPreferenceSummaryToValue(findPreference("sync_frequency"));
-        }
-
-        @Override
-        public void onResume() {
-            super.onResume();
-            getPreferenceScreen().getSharedPreferences()
-                    .registerOnSharedPreferenceChangeListener(this);
-        }
-
-        @Override
-        public void onPause() {
-            super.onPause();
-            getPreferenceScreen().getSharedPreferences()
-                    .unregisterOnSharedPreferenceChangeListener(this);
-        }
-
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            switch(String.valueOf(key))
-            {
-                case "enable_sync":
-                    boolean syncEnable = sharedPreferences.getBoolean(key, false);
-                    if(syncEnable) {
-                        Application.startRepeatingTask();
-                    }else{
-                        Application.stopRepeatingTask();
-                    }
-                    break;
-                case "sync_frequency":
-                    String sync_freq = sharedPreferences.getString(key, "300000");
-                    Application.setmInterval(Integer.valueOf(sync_freq));
-                    break;
-                default :
-
-                    break;
-
-            }
-        }
+    public void setNotificationOn(boolean syncEnable) {
+        ((OsmTemplateApplication) getApplication()).setNotificationOn(syncEnable);
     }
 
-    /**
-     * This fragment shows data and sync preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class AccessibilityFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener  {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_accessibility);
-            setHasOptionsMenu(true);
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            bindPreferenceSummaryToValue(findPreference("font_size"));
-        }
-
-        @Override
-        public void onResume() {
-            super.onResume();
-            getPreferenceScreen().getSharedPreferences()
-                    .registerOnSharedPreferenceChangeListener(this);
-        }
-
-        @Override
-        public void onPause() {
-            super.onPause();
-            getPreferenceScreen().getSharedPreferences()
-                    .unregisterOnSharedPreferenceChangeListener(this);
-        }
-
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            switch (String.valueOf(key))
-            {
-                case "dyslexy" :
-                    if(sharedPreferences.getBoolean(key, false))
-                    {
-                        Application.setFont("fonts/OpenDyslexic3-Regular.ttf");
-                    }
-                    else
-                    {
-                        Application.setFont("fonts/arial.ttf");
-                    }
-                    break;
-                case "color_blind":
-
-                    break;
-                default:
-                    break;
-            }
-        }
+    public void setVibrationAllow(boolean vibrationEnable) {
+        ((OsmTemplateApplication) getApplication()).setVibrationAllow(vibrationEnable);
     }
 
+    public void stopSync() {
+        ((OsmTemplateApplication) getApplication()).stopRepeatingTask();
+    }
 
-
+    public void setFont(String font) {
+        ((OsmTemplateApplication) getApplication()).setFont(font);
+    }
 }

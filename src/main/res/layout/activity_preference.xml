@@ -35,4 +35,5 @@
         android:name="io.jawg.osmcontributor.ui.fragments.MyPreferenceFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
 </LinearLayout>

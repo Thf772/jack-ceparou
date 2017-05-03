@@ -19,33 +19,4 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_sync_frequency" />
 
-    <!-- This preference simply launches an intent when selected. Use this UI sparingly, per
-         design guidelines. -->
-    <Preference android:title="@string/pref_title_system_sync_settings">
-        <intent android:action="android.settings.SYNC_SETTINGS" />
-    </Preference>
-
-    <Preference
-        android:inputType="none"
-        android:key="@string/shared_prefs_google_connection_key"
-        android:title="@string/shared_prefs_google_connection"
-        android:icon="@drawable/ic_google"/>
-
-    <EditTextPreference
-        android:inputType="textNoSuggestions"
-        android:key="@string/shared_prefs_login"
-        android:summary="@string/summary_login"
-        android:title="@string/prompt_login"/>
-
-    <EditTextPreference
-        android:inputType="textPassword"
-        android:key="@string/shared_prefs_password"
-        android:summary="@string/summary_password"
-        android:title="@string/prompt_password"/>
-
-    <Preference
-        android:inputType="none"
-        android:key="@string/shared_prefs_server_key"
-        android:title="@string/shared_prefs_server"/>
-
 </PreferenceScreen>

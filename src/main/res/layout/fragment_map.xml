@@ -208,8 +208,8 @@
         android:layout_marginRight="16dp"
         android:src="@drawable/move_poi"
         android:visibility="gone"
-        app:fab_colorNormal="@color/material_blue_500"
-        app:fab_colorPressed="@color/material_blue_grey_800" />
+        app:fab_colorNormal="@color/material_grey_800"
+        app:fab_colorPressed="@color/material_grey_600" />
 
     <RelativeLayout
         android:id="@+id/floating_btn_wrapper"

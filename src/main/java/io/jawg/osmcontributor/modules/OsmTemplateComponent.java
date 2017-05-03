@@ -40,6 +40,8 @@ import io.jawg.osmcontributor.rest.managers.SyncManager;
 import io.jawg.osmcontributor.service.CancelButtonReceiver;
 import io.jawg.osmcontributor.service.OfflineRegionDownloadService;
 import io.jawg.osmcontributor.service.OfflineRegionModule;
+import io.jawg.osmcontributor.setting.fragment.ConnectionFragment;
+import io.jawg.osmcontributor.setting.fragment.GeneralPreferenceFragment;
 import io.jawg.osmcontributor.sync.SyncModule;
 import io.jawg.osmcontributor.ui.activities.EditPoiActivity;
 import io.jawg.osmcontributor.ui.activities.LoadProfileActivity;
@@ -120,6 +122,10 @@ public interface OsmTemplateComponent {
     void inject(LoadProfileActivity loadProfileActivity);
 
     // Fragments
+    void inject(ConnectionFragment myPreferenceFragment);
+
+    void inject(GeneralPreferenceFragment myPreferenceFragment);
+
     void inject(MyPreferenceFragment myPreferenceFragment);
 
     void inject(EditPoiFragment editPoiFragment);

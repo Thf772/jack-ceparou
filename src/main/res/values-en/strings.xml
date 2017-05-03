@@ -473,4 +473,5 @@ Il est conseillé d\'avoir une connexion Wifi pendant le téléchargement.\n\nVo
     <string name="notification_message">New obstacle</string>
     <string name="notification_message_values">A new obstacle is spotted nearby</string>
     <string name="pref_header_connection">Parametre de connection</string>
+    <string name="pref_header_Compte">Compte</string>
 </resources>

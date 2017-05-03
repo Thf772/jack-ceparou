@@ -19,6 +19,7 @@
 package io.jawg.osmcontributor.ui.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -31,11 +32,13 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.BindView;
 import org.greenrobot.eventbus.EventBus;
+
 import io.jawg.osmcontributor.OsmTemplateApplication;
 import io.jawg.osmcontributor.R;
 import io.jawg.osmcontributor.ui.events.edition.PleaseApplyTagChangeView;
 import io.jawg.osmcontributor.ui.fragments.EditPoiFragment;
 import io.jawg.osmcontributor.utils.OsmAnswers;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class EditPoiActivity extends AppCompatActivity {
     public static final String POI_ID = "POI_ID";
@@ -56,7 +59,13 @@ public class EditPoiActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ((OsmTemplateApplication) getApplication()).init(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_poi);
         ((OsmTemplateApplication) getApplication()).getOsmTemplateComponent().inject(this);

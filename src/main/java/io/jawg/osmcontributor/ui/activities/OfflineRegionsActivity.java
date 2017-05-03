@@ -18,6 +18,7 @@
  */
 package io.jawg.osmcontributor.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -68,6 +69,7 @@ import io.jawg.osmcontributor.ui.listeners.RecyclerItemClickListener;
 import io.jawg.osmcontributor.ui.managers.tutorial.OfflineTutoManager;
 import io.jawg.osmcontributor.ui.managers.tutorial.TutorialManager;
 import io.jawg.osmcontributor.utils.OsmAnswers;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
  * @author Tommy Buonomo on 08/08/16.
@@ -78,6 +80,11 @@ public class OfflineRegionsActivity extends AppCompatActivity {
     private static final int PADDING_TOP_BOUNDS = 100;
     private static final int PADDING_OTHER_BOUNDS = 20;
     private static final int MIN_DOWNLOAD_ZOOM = 11;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 
     private enum Mode {
         STATUS_COMPLETE(false, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE, View.GONE),
@@ -158,6 +165,7 @@ public class OfflineRegionsActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        ((OsmTemplateApplication) getApplication()).init(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offline_regions);
         ((OsmTemplateApplication) getApplication()).getOsmTemplateComponent().inject(this);

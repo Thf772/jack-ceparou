@@ -12,6 +12,20 @@
         android:singleLine="true"
         android:title="@string/pref_title_display_name" />
 
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="s_localisation"
+        android:title="@string/activate_Localisation" />
+
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/pref_langage_titles"
+        android:entryValues="@array/pref_langage_values"
+        android:key="langage_list"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_langage" />
+
     <CheckBoxPreference
         android:key="@string/shared_prefs_expert_mode"
         android:summary="@string/expert_mode_summary"
@@ -29,7 +43,10 @@
         android:title="@string/reset_type_title"/>
 
     <PreferenceCategory
-        android:title="Temporaire">
+        android:title="@string/shared_prefs_h2geo_title">
+    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it. -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
 
         <Preference
             android:inputType="none"
@@ -37,23 +54,4 @@
             android:title="Version"/>
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/shared_prefs_h2geo_title">
-    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
-         dismiss it. -->
-    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
-    <ListPreference
-        android:defaultValue="0"
-        android:entries="@array/pref_langage_titles"
-        android:entryValues="@array/pref_langage_values"
-        android:key="langage_list"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_langage" />
-
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="s_localisation"
-        android:title="@string/activate_Localisation" />
-    </PreferenceCategory>
 </PreferenceScreen>

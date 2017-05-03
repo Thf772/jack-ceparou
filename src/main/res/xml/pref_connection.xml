@@ -22,4 +22,5 @@
         android:inputType="none"
         android:key="@string/shared_prefs_server_key"
         android:title="@string/shared_prefs_server"/>
+
 </PreferenceScreen>

@@ -60,6 +60,7 @@ import io.jawg.osmcontributor.rest.events.error.SyncUnauthorizedEvent;
 import io.jawg.osmcontributor.ui.adapters.CommentAdapter;
 import io.jawg.osmcontributor.ui.events.map.PleaseApplyNewComment;
 import io.jawg.osmcontributor.ui.events.note.ApplyNewCommentFailedEvent;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 public class NoteActivity extends AppCompatActivity {
@@ -74,6 +75,11 @@ public class NoteActivity extends AppCompatActivity {
     public static final String CLOSE = "Close";
     public static final String REOPEN = "re-Opened";
     public static final String COMMENT = "Comment";
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 
     @Inject
     EventBus eventBus;
@@ -116,6 +122,7 @@ public class NoteActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ((OsmTemplateApplication) getApplication()).init(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note);
         ((OsmTemplateApplication) getApplication()).getOsmTemplateComponent().inject(this);

@@ -22,9 +22,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import io.jawg.osmcontributor.OsmTemplateApplication;
 import io.jawg.osmcontributor.api.ReportAPI;
 
 import io.jawg.osmcontributor.R;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static android.provider.MediaStore.ACTION_IMAGE_CAPTURE;
 
@@ -34,7 +36,13 @@ public class NewReportActivity extends AppCompatActivity {
     String imageFilePath;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ((OsmTemplateApplication) getApplication()).init(this);
         super.onCreate(savedInstanceState);
 
         imageCapture = new ImageCapture(this);

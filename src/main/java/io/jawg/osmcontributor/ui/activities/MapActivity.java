@@ -1,24 +1,25 @@
 /**
  * Copyright (C) 2016 eBusiness Information
- *
+ * <p>
  * This file is part of OSM Contributor.
- *
+ * <p>
  * OSM Contributor is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * OSM Contributor is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with OSM Contributor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package io.jawg.osmcontributor.ui.activities;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -26,9 +27,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,6 +57,8 @@ import io.jawg.osmcontributor.OsmTemplateApplication;
 import io.jawg.osmcontributor.R;
 import io.jawg.osmcontributor.model.entities.PoiType;
 import io.jawg.osmcontributor.model.events.PleaseLoadPoiTypes;
+import io.jawg.osmcontributor.setting.activities.SettingsActivity;
+import io.jawg.osmcontributor.setting.dialog.NoticeDialogFragment;
 import io.jawg.osmcontributor.ui.events.login.UpdateFirstConnectionEvent;
 import io.jawg.osmcontributor.ui.events.map.ChangeMapModeEvent;
 import io.jawg.osmcontributor.ui.events.map.ChangesInDB;
@@ -85,8 +90,11 @@ import mobi.designmyapp.arpigl.listener.PoiSelectionListener;
 import mobi.designmyapp.arpigl.provider.impl.NetworkTileProvider;
 import mobi.designmyapp.arpigl.ui.ArpiGlFragment;
 import timber.log.Timber;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class MapActivity extends AppCompatActivity {
+public class MapActivity extends AppCompatActivity implements NoticeDialogFragment.NoticeDialogListener {
+
+    private final int SETTING_ACTIVITY = 1;
 
     @Inject
     EventBus eventBus;
@@ -141,6 +149,7 @@ public class MapActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ((OsmTemplateApplication) getApplication()).init(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
@@ -151,6 +160,7 @@ public class MapActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         eventBus.post(new UpdateFirstConnectionEvent());
+        checkFirstStart();
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -230,6 +240,26 @@ public class MapActivity extends AppCompatActivity {
 
         if (sharedPreferences.getBoolean(getString(R.string.easter_egg), false)) {
             navigationView.getMenu().findItem(R.id.arpi_view).setVisible(true);
+        }
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    public void checkFirstStart() {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if (settings.getBoolean("first_start", true)) {
+            //the app is being launched for first time, do something
+            Log.d("Comments", "First start off the application");
+
+            DialogFragment newFragment = new NoticeDialogFragment();
+            newFragment.show(this.getSupportFragmentManager(), String.valueOf(R.string.setup));
+
+            // record the fact that the app has been started at least once
+            settings.edit().putBoolean("first_start", false).commit();
         }
     }
 
@@ -534,14 +564,23 @@ public class MapActivity extends AppCompatActivity {
 
     private void startPreferencesActivity() {
         drawerLayout.closeDrawer(navigationView);
-        Intent intent = new Intent(this, MyPreferencesActivity.class);
-        startActivity(intent);
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivityForResult(intent, SETTING_ACTIVITY);
     }
 
     private void startAboutActivity() {
         drawerLayout.closeDrawer(navigationView);
         Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        if (requestCode == SETTING_ACTIVITY) {
+            recreate(); // your "refresh" code
+        }
     }
 
     private void startProfileLoadingActivity() {
@@ -612,5 +651,11 @@ public class MapActivity extends AppCompatActivity {
 
     public NavigationView getNavigationView() {
         return navigationView;
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        Intent myIntent = new Intent(this, SettingsActivity.class);
+        this.startActivityForResult(myIntent, SETTING_ACTIVITY);
     }
 }
