@@ -1,0 +1,7 @@
+COMMAND=PREDEX_LIBRARY
+FILE_PATH=C:\Users\Flo Macé\.gradle\caches\modules-2\files-2.1\com.jakewharton.timber\timber\2.7.1\8fa5f11686c7a44386b41a6890e655cf2b7d5e70\timber-2.7.1.jar
+FILE_HASH=8fa5f11686c7a44386b41a6890e655cf2b7d5e70
+BUILD_TOOLS_REVISION=25.0.1
+JUMBO_MODE=true
+OPTIMIZE=true
+MULTI_DEX=true

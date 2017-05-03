@@ -1,0 +1,7 @@
+COMMAND=PREDEX_LIBRARY
+FILE_PATH=C:\Users\Flo Macé\.gradle\caches\modules-2\files-2.1\com.facebook.stetho\stetho\1.3.1\2c4076b466a0eb4d6ddf5721edd35cd1adc1f317\stetho-1.3.1.jar
+FILE_HASH=2c4076b466a0eb4d6ddf5721edd35cd1adc1f317
+BUILD_TOOLS_REVISION=25.0.1
+JUMBO_MODE=true
+OPTIMIZE=true
+MULTI_DEX=true

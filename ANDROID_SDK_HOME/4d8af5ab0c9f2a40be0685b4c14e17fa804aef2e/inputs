@@ -1,0 +1,7 @@
+COMMAND=PREDEX_LIBRARY
+FILE_PATH=C:\Users\Flo Macé\.gradle\caches\modules-2\files-2.1\com.squareup.retrofit\retrofit\1.9.0\a681c044244d9fc375198588297a39ba78028423\retrofit-1.9.0.jar
+FILE_HASH=a681c044244d9fc375198588297a39ba78028423
+BUILD_TOOLS_REVISION=25.0.1
+JUMBO_MODE=true
+OPTIMIZE=true
+MULTI_DEX=true

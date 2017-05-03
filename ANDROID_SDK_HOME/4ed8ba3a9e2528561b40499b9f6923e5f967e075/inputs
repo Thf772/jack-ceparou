@@ -1,0 +1,7 @@
+COMMAND=PREDEX_LIBRARY
+FILE_PATH=C:\Users\Flo Macé\.gradle\caches\modules-2\files-2.1\com.parse.bolts\bolts-tasks\1.4.0\d85884acf6810a3bbbecb587f239005cbc846dc4\bolts-tasks-1.4.0.jar
+FILE_HASH=d85884acf6810a3bbbecb587f239005cbc846dc4
+BUILD_TOOLS_REVISION=25.0.1
+JUMBO_MODE=true
+OPTIMIZE=true
+MULTI_DEX=true

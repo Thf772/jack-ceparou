@@ -18,6 +18,7 @@
         android:title="@string/pref_title_vibrate" />
 
     <RingtonePreference
+        android:defaultValue="content://settings/system/notification_sound"
         android:dependency="notifications_new_report"
         android:key="notifications_new_message_ringtone"
         android:ringtoneType="notification"

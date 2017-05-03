@@ -1,0 +1,7 @@
+COMMAND=PREDEX_LIBRARY
+FILE_PATH=C:\Users\Flo Macé\.gradle\caches\modules-2\files-2.1\com.j256.ormlite\ormlite-android\4.48\afa06f539a4026c10b247386312aa67404b80a16\ormlite-android-4.48.jar
+FILE_HASH=afa06f539a4026c10b247386312aa67404b80a16
+BUILD_TOOLS_REVISION=25.0.1
+JUMBO_MODE=true
+OPTIMIZE=true
+MULTI_DEX=true

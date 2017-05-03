@@ -1,0 +1,7 @@
+COMMAND=PREDEX_LIBRARY
+FILE_PATH=C:\Users\Flo Macé\.gradle\caches\modules-2\files-2.1\com.mobprofs\retrofit-simplexmlconverter\1.1\ac2d779d0977d1e3537fe2a8b15e687f19684be2\retrofit-simplexmlconverter-1.1.jar
+FILE_HASH=ac2d779d0977d1e3537fe2a8b15e687f19684be2
+BUILD_TOOLS_REVISION=25.0.1
+JUMBO_MODE=true
+OPTIMIZE=true
+MULTI_DEX=true

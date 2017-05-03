@@ -1,0 +1,7 @@
+COMMAND=PREDEX_LIBRARY
+FILE_PATH=C:\Users\Flo Macé\.gradle\caches\modules-2\files-2.1\com.github.scribejava\scribejava-core\2.8.1\8d0ab16ddeac60c3ffb2c8762a8f13a6bbdf3113\scribejava-core-2.8.1.jar
+FILE_HASH=8d0ab16ddeac60c3ffb2c8762a8f13a6bbdf3113
+BUILD_TOOLS_REVISION=25.0.1
+JUMBO_MODE=true
+OPTIMIZE=true
+MULTI_DEX=true

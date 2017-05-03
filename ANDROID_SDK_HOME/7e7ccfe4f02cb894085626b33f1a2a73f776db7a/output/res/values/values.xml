@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/home/excilys/workspace/DMA/arpi-gl/android/arpigl/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="error_no_gps_available_message">Some features will not work with your device.</string>
+    <string name="error_no_gps_available_title">Your device doesn\'t have GPS.</string>
+    <string name="location_turn_on_toast">Please turn location on.</string>
+</resources>

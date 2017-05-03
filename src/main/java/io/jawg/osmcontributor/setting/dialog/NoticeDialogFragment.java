@@ -50,6 +50,7 @@ public class NoticeDialogFragment extends DialogFragment {
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
+        builder.setView(inflater.inflate(R.layout.notice_dialog, null), 0, 0, 0, 0);
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 //                        mListener.onDialogPositiveClick(NoticeDialogFragment.this);
