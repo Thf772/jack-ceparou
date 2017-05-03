@@ -57,6 +57,8 @@ import io.jawg.osmcontributor.utils.core.StoreConfigManager;
 import timber.log.Timber;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
+import static io.jawg.osmcontributor.setting.fragment.AccessibilityFragment.MAP_STYLE;
+
 public class OsmTemplateApplication extends Application {
 
     /*=========================================*/
@@ -72,6 +74,8 @@ public class OsmTemplateApplication extends Application {
     private static boolean vibrationAllow;
     private static NotificationCompat.Builder notification;
     private PendingIntent notificationClickEffect;
+
+    private String mapStyle;
 
     private OsmTemplateComponent osmTemplateComponent;
 
@@ -94,6 +98,8 @@ public class OsmTemplateApplication extends Application {
         // Init Dagger
         osmTemplateComponent = DaggerOsmTemplateComponent.builder().osmTemplateModule(new OsmTemplateModule(this)).build();
         osmTemplateComponent.inject(this);
+
+
 
         // Init Flickr object
         StoreConfigManager configManager = new StoreConfigManager();
@@ -142,6 +148,9 @@ public class OsmTemplateApplication extends Application {
         createNotification();
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        mapStyle = prefs.getString(MAP_STYLE, "asset://mapnik.json");
+
         if (prefs.getBoolean("dyslexy", false)) {
             setFont("fonts/OpenDyslexic3-Regular.ttf");
         } else {
@@ -307,6 +316,10 @@ public class OsmTemplateApplication extends Application {
      */
     public Flickr getFlickr() {
         return flickr;
+    }
+
+    public String getMapStyle() {
+        return mapStyle;
     }
 
 

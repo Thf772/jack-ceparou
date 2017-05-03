@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.ActionBar;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
+import org.greenrobot.eventbus.EventBus;
 
+import javax.inject.Inject;
+
+import io.jawg.osmcontributor.OsmTemplateApplication;
 import io.jawg.osmcontributor.R;
 import io.jawg.osmcontributor.setting.activities.SettingsActivity;
+import io.jawg.osmcontributor.ui.events.edition.PleaseSetMapboxStyle;
 
 import static io.jawg.osmcontributor.setting.activities.SettingsActivity.bindPreferenceSummaryToValue;
 
@@ -22,15 +24,29 @@ import static io.jawg.osmcontributor.setting.activities.SettingsActivity.bindPre
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class AccessibilityFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    public static final String MAP_STYLE = "map_style";
+
     private final String DYSLEXY_KEY = "dyslexy";
     private final String COLOR_BLIND_KEY = "color_blind";
     private final String FONT_SIZE_KEY = "font_size";
+    private String mapboxStyle;
+    private String font;
+
+    private boolean dyslexy;
+    private String fontSize = "";
+
+    @Inject
+    EventBus eventBus;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_accessibility);
         setHasOptionsMenu(true);
+
+        OsmTemplateApplication application = ((OsmTemplateApplication) getActivity().getApplication());
+        application.getOsmTemplateComponent().inject(this);
 
         SettingsActivity appCompatActivity = (SettingsActivity) getActivity();
         if (appCompatActivity != null) {
@@ -39,7 +55,7 @@ public class AccessibilityFragment extends PreferenceFragment implements SharedP
                 actionBar.setDisplayHomeAsUpEnabled(true);
             }
         }
-
+//        eventBus.register(this);
 
         // Bind the summaries of EditText/List/Dialog/Ringtone preferences
         // to their values. When their values change, their summaries are
@@ -48,26 +64,46 @@ public class AccessibilityFragment extends PreferenceFragment implements SharedP
         bindPreferenceSummaryToValue(findPreference("font_size"));
     }
 
-    private void changeMapFont(String fontName) {
-//        curl "https://api.mapbox.com/styles/v1/{username}/{style_id}?access_token=your-access-token"
-        retrieveMapBoxStyle();
-    }
-
-    private String retrieveMapBoxStyle() {
-        Properties prop = new Properties();
-        try {
-            prop.load(new FileInputStream("conf.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
+    private String getFont() {
+        SharedPreferences pref = getPreferenceManager().getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String styleUrl = "asset://";
+        if (dyslexy) {
+            styleUrl += "Dyslexy";
+        } else {
+            styleUrl += "Normal";
         }
-        String api_key = prop.getProperty("mapbox_token");
-        String url = "https://api.mapbox.com/styles/v1/{username}/{style_id}?access_token=" + api_key;
 
-        return "";
+        switch (fontSize) {
+            case "small":
+                styleUrl += "S";
+                break;
+            case "normal":
+                styleUrl += "N";
+                break;
+            case "large":
+                styleUrl += "L";
+                break;
+            case "xlarge":
+                styleUrl += "XL";
+                break;
+            default:
+                styleUrl += "N";
+                break;
+        }
+        styleUrl += ".json";
+
+        pref.edit().putString(MAP_STYLE, styleUrl).commit();
+        return styleUrl;
     }
 
-    private void changeMapFontSize() {
+    private void changeMapFont() {
+        eventBus.post(new PleaseSetMapboxStyle(getFont()));
+    }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        eventBus.unregister(this);
     }
 
     @Override
@@ -88,18 +124,21 @@ public class AccessibilityFragment extends PreferenceFragment implements SharedP
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (String.valueOf(key)) {
             case DYSLEXY_KEY:
-                String font;
                 if (sharedPreferences.getBoolean(key, false)) {
                     font = "fonts/OpenDyslexic3-Regular.ttf";
+                    dyslexy = true;
                 } else {
                     font = "fonts/arial.ttf";
+                    dyslexy = false;
                 }
                 ((SettingsActivity) getActivity()).setFont(font);
-                changeMapFont(font);
+                changeMapFont();
                 break;
             case COLOR_BLIND_KEY:
 
                 break;
+            case FONT_SIZE_KEY:
+                fontSize = sharedPreferences.getString(key, "normal");
             default:
                 break;
         }

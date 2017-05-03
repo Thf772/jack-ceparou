@@ -113,6 +113,7 @@ import io.jawg.osmcontributor.ui.adapters.PoiTypePickerAdapter;
 import io.jawg.osmcontributor.ui.dialogs.NoteCommentDialogFragment;
 import io.jawg.osmcontributor.ui.events.edition.PleaseApplyNodeRefPositionChange;
 import io.jawg.osmcontributor.ui.events.edition.PleaseApplyPoiPositionChange;
+import io.jawg.osmcontributor.ui.events.edition.PleaseSetMapboxStyle;
 import io.jawg.osmcontributor.ui.events.map.AddressFoundEvent;
 import io.jawg.osmcontributor.ui.events.map.ChangeMapModeEvent;
 import io.jawg.osmcontributor.ui.events.map.EditionWaysLoadedEvent;
@@ -320,7 +321,6 @@ public class MapFragment extends Fragment {
         // LocationView settings
         mapboxMap.getMyLocationViewSettings().setAccuracyAlpha(0);
         mapboxMap.getMyLocationViewSettings().setForegroundTintColor(ContextCompat.getColor(getActivity(), R.color.colorPrimaryTransparent));
-
 
         // Set the map center and zoom to the saved values or use the default values
         getUserLocation();
@@ -692,6 +692,7 @@ public class MapFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPleaseGiveMeMapCenterEvent(PleaseGiveMeMapCenterEvent event) {
         eventBus.post(new MapCenterValueEvent(mapboxMap.getCameraPosition().target));
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -700,7 +701,7 @@ public class MapFragment extends Fragment {
             if (event.isSatelliteMode()) {
                 mapboxMap.setStyleUrl("mapbox://styles/mapbox/satellite-streets-v9");
             } else {
-                mapboxMap.setStyleUrl("asset://mapnik.json");
+                mapboxMap.setStyleUrl("asset://NormalN.json");
             }
         }
     }
@@ -1009,6 +1010,11 @@ public class MapFragment extends Fragment {
         } else {
             Toast.makeText(getActivity(), getString(R.string.zoom_to_edit), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSetMapBoxStyle(PleaseSetMapboxStyle event) {
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

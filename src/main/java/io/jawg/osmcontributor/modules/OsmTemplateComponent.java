@@ -40,6 +40,7 @@ import io.jawg.osmcontributor.rest.managers.SyncManager;
 import io.jawg.osmcontributor.service.CancelButtonReceiver;
 import io.jawg.osmcontributor.service.OfflineRegionDownloadService;
 import io.jawg.osmcontributor.service.OfflineRegionModule;
+import io.jawg.osmcontributor.setting.fragment.AccessibilityFragment;
 import io.jawg.osmcontributor.setting.fragment.ConnectionFragment;
 import io.jawg.osmcontributor.setting.fragment.GeneralPreferenceFragment;
 import io.jawg.osmcontributor.sync.SyncModule;
@@ -123,6 +124,8 @@ public interface OsmTemplateComponent {
     void inject(GeneralPreferenceFragment myPreferenceFragment);
 
     void inject(EditPoiFragment editPoiFragment);
+
+    void inject(AccessibilityFragment accessibilityFragment);
 
     void inject(AddValueDialogFragment addValueDialogFragment);
 

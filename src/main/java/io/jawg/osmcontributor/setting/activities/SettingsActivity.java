@@ -21,6 +21,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 
+import com.mapbox.mapboxsdk.maps.MapView;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -49,6 +51,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+
+    @BindView(R.id.mapview)
+    MapView mapView;
 
     /**
      * A preference value change listener that updates the preference's summary
@@ -152,6 +157,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         setupActionBar();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mapView != null) {
+            mapView.onDestroy();
+        }
+    }
 
     @Override
     protected void onResume() {

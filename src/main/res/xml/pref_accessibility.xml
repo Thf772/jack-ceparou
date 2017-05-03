@@ -16,7 +16,7 @@
     />
 
 <ListPreference
-    android:defaultValue="14"
+    android:defaultValue="2"
     android:entries="@array/pref_font_size_titles"
     android:entryValues="@array/pref_font_size_titles"
     android:key="font_size"
