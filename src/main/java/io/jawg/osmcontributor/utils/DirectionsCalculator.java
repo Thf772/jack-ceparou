@@ -87,7 +87,11 @@ public class DirectionsCalculator {
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public boolean calculateDirections(StartDirectionsCalculationEvent ev) {
-        if (!this.isReady()) return false; // TODO Error signalling
+        if (!this.isReady()) {
+            // TODO Error signalling
+            events.post(new DoneCalculatingDirectionsEvent(null));
+            return false;
+        }
 
         ArrayList<Position> pos = new ArrayList<>(this.points.size());
 
@@ -107,11 +111,13 @@ public class DirectionsCalculator {
         } catch (ServicesException e) {
             e.printStackTrace();
             // TODO Error signalling
+            events.post(new DoneCalculatingDirectionsEvent(null));
             return false;
         }
 
         if (client == null) {
             // TODO Error signalling
+            events.post(new DoneCalculatingDirectionsEvent(null));
             return false;
         }
 
