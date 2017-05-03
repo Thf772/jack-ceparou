@@ -75,8 +75,10 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -94,6 +96,7 @@ import io.jawg.osmcontributor.R;
 import io.jawg.osmcontributor.model.entities.Note;
 import io.jawg.osmcontributor.model.entities.Poi;
 import io.jawg.osmcontributor.model.entities.PoiNodeRef;
+import io.jawg.osmcontributor.model.entities.PoiTag;
 import io.jawg.osmcontributor.model.entities.PoiType;
 import io.jawg.osmcontributor.model.entities.PoiTypeTag;
 import io.jawg.osmcontributor.model.entities.Way;
@@ -843,6 +846,38 @@ public class MapFragment extends Fragment {
     }
 
     public void unselectMarker() {
+        Iterator it = markersPoi.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            LocationMarkerViewOptions<Poi> lmvo = (LocationMarkerViewOptions<Poi>) pair.getValue();
+            Marker marker = lmvo.getMarker();
+            Poi poi = lmvo.getRelatedObject();
+            Collection<PoiTag> tags = poi.getTags();
+            Iterator tagIt = tags.iterator();
+            while (tagIt.hasNext()) {
+                PoiTag tag = (PoiTag) tagIt.next();
+                Bitmap bitmap = null;
+                if (tag.getKey().equals("wheelchair")) {
+                    switch (tag.getValue()) {
+                        case "yes" :
+                            bitmap = bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, poi.getUpdated()), 'Y');
+                            break;
+                        case "no" :
+                            bitmap = bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, poi.getUpdated()), 'N');
+                            break;
+                        case "bad" :
+                            bitmap = bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, poi.getUpdated()), 'B');
+                            break;
+                    }
+                } else {
+                    bitmap = bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, poi.getUpdated()), 'U');
+                    break;
+                }
+                if (bitmap != null) {
+                    marker.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmap));
+                }
+            }
+        }
         if (markerSelected != null) {
             Bitmap bitmap = null;
 

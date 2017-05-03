@@ -72,8 +72,7 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
     maven { url "https://jitpack.io" }
     flatDir {
-        dirs 'lib'
-    }
+        dirs 'lib'    }
 }
 
 
@@ -83,7 +82,9 @@ if (!project.hasProperty('foss')) {
     apply plugin: 'io.fabric'
 }
 apply plugin: 'com.neenbedankt.android-apt'
+
 apply plugin: 'checkstyle'
+
 
 android {
     compileSdkVersion 25
@@ -321,9 +322,9 @@ task checkstyle(type: Checkstyle) {
     // empty classpath
     classpath = files()
 }
-
+/*
 preBuild.dependsOn('checkstyle')
-
+*/
 /*apply plugin: 'com.github.hierynomus.license'
 license {
     header = file("LICENSE-HEADER")
