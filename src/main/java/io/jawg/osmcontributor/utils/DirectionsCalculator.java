@@ -41,6 +41,7 @@ public class DirectionsCalculator {
     public DirectionsCalculator(EventBus events) {
         this.points = new Vector<Poi>();
         this.events = events;
+        events.register(this);
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -79,8 +80,9 @@ public class DirectionsCalculator {
     public void calculateDirections(StartDirectionsCalculationEvent ev) {
         if (!this.isReady()) {
             // TODO Error signalling
-            //events.post(new DoneCalculatingDirectionsEvent(null));
-            throw new RuntimeException("DirectionsCalculator not ready");
+            events.post(new DoneCalculatingDirectionsEvent(null));
+            //throw new RuntimeException("DirectionsCalculator not ready");
+            return;
         }
 
         ArrayList<Position> pos = new ArrayList<>(this.points.size());
@@ -101,15 +103,16 @@ public class DirectionsCalculator {
         } catch (ServicesException e) {
             e.printStackTrace();
             // TODO Error signalling
-            //events.post(new DoneCalculatingDirectionsEvent(null));
-            //return false;
-            throw new RuntimeException("Unable to build Directions getter");
+            events.post(new DoneCalculatingDirectionsEvent(null));
+            return;
+            //throw new RuntimeException("Unable to build Directions getter");
         }
 
         if (client == null) {
             // TODO Error signalling
-            //events.post(new DoneCalculatingDirectionsEvent(null));
-            throw new NullPointerException("Unable to build Directions getter");
+            events.post(new DoneCalculatingDirectionsEvent(null));
+            //throw new NullPointerException("Unable to build Directions getter");
+            return;
         }
 
         client.enqueueCall(new Callback<DirectionsResponse>() {
@@ -117,12 +120,12 @@ public class DirectionsCalculator {
             public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
                 if (response.body() == null) {
                     // TODO Error signalling
-                    //events.post(new DoneCalculatingDirectionsEvent(null));
-                    throw new NullPointerException("No routes");
+                    events.post(new DoneCalculatingDirectionsEvent(null));
+                    //throw new NullPointerException("No routes");
                 } else if (response.body().getRoutes().size() < 1) {
                     // TODO Error signalling
-                    //events.post(new DoneCalculatingDirectionsEvent(null));
-                    throw new NullPointerException("No routes");
+                    events.post(new DoneCalculatingDirectionsEvent(null));
+                    //throw new NullPointerException("No routes");
                 } else {
                     // TODO On success
                     events.post(new DoneCalculatingDirectionsEvent(response.body().getRoutes().get(0)));
@@ -132,8 +135,8 @@ public class DirectionsCalculator {
             @Override
             public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
                 // TODO Error signalling
-                //events.post(new DoneCalculatingDirectionsEvent(null));
-                throw new RuntimeException("Failure on getting directions");
+                events.post(new DoneCalculatingDirectionsEvent(null));
+                //throw new RuntimeException("Failure on getting directions");
             }
         });
     }
