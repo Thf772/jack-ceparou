@@ -71,9 +71,6 @@
             android:name=".ui.activities.LoadProfileActivity"
             android:label="@string/profile_load" />
         <activity
-            android:name=".ui.activities.MyPreferencesActivity"
-            android:label="@string/title_activity_my_preferences"/>
-        <activity
             android:name=".ui.activities.TypeListActivity"
             android:label="@string/manage_poi_types" />
         <activity

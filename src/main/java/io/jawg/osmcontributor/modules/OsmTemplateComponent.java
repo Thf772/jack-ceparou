@@ -46,7 +46,6 @@ import io.jawg.osmcontributor.sync.SyncModule;
 import io.jawg.osmcontributor.ui.activities.EditPoiActivity;
 import io.jawg.osmcontributor.ui.activities.LoadProfileActivity;
 import io.jawg.osmcontributor.ui.activities.MapActivity;
-import io.jawg.osmcontributor.ui.activities.MyPreferencesActivity;
 import io.jawg.osmcontributor.ui.activities.NoteActivity;
 import io.jawg.osmcontributor.ui.activities.OfflineRegionsActivity;
 import io.jawg.osmcontributor.ui.activities.PhotoActivity;
@@ -68,7 +67,6 @@ import io.jawg.osmcontributor.ui.dialogs.LoginDialogFragment;
 import io.jawg.osmcontributor.ui.dialogs.NoteCommentDialogFragment;
 import io.jawg.osmcontributor.ui.fragments.EditPoiFragment;
 import io.jawg.osmcontributor.ui.fragments.MapFragment;
-import io.jawg.osmcontributor.ui.fragments.MyPreferenceFragment;
 import io.jawg.osmcontributor.ui.fragments.NoteDetailFragment;
 import io.jawg.osmcontributor.ui.fragments.PoiDetailFragment;
 import io.jawg.osmcontributor.ui.managers.EditPoiManager;
@@ -107,8 +105,6 @@ public interface OsmTemplateComponent {
 
     void inject(MapActivity mapActivity);
 
-    void inject(MyPreferencesActivity myPreferencesActivity);
-
     void inject(PickValueActivity pickValueActivity);
 
     void inject(NoteActivity noteActivity);
@@ -125,8 +121,6 @@ public interface OsmTemplateComponent {
     void inject(ConnectionFragment myPreferenceFragment);
 
     void inject(GeneralPreferenceFragment myPreferenceFragment);
-
-    void inject(MyPreferenceFragment myPreferenceFragment);
 
     void inject(EditPoiFragment editPoiFragment);
 

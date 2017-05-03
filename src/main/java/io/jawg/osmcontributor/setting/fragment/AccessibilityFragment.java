@@ -8,10 +8,6 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.ActionBar;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
-
 import io.jawg.osmcontributor.R;
 import io.jawg.osmcontributor.setting.activities.SettingsActivity;
 

@@ -156,7 +156,11 @@ public class MapActivity extends AppCompatActivity implements NoticeDialogFragme
         ((OsmTemplateApplication) getApplication()).getOsmTemplateComponent().inject(this);
         ButterKnife.bind(this);
 
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        PreferenceManager.setDefaultValues(this, R.xml.pref_accessibility, false);
+        PreferenceManager.setDefaultValues(this, R.xml.pref_connection, false);
+        PreferenceManager.setDefaultValues(this, R.xml.pref_data_sync, false);
+        PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
+        PreferenceManager.setDefaultValues(this, R.xml.pref_notification    , false);
         setSupportActionBar(toolbar);
 
         eventBus.post(new UpdateFirstConnectionEvent());
