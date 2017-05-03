@@ -7,8 +7,8 @@ public class CreateNewReportEvent {
 
     String title;
     String description;
-    double latitude;
-    double longitude;
+    Double latitude;
+    Double longitude;
     String imageFilePath;
 
     public String getTitle() {
@@ -19,11 +19,11 @@ public class CreateNewReportEvent {
         return description;
     }
 
-    public double getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public double getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
@@ -31,7 +31,7 @@ public class CreateNewReportEvent {
         return imageFilePath;
     }
 
-    public CreateNewReportEvent(String title, String description, double latitude, double longitude, String imageFilePath) {
+    public CreateNewReportEvent(String title, String description, Double latitude, Double longitude, String imageFilePath) {
 
         this.title = title;
         this.description = description;

@@ -65,6 +65,10 @@
             android:title="@string/offline_regions"/>
 
         <item
+            android:id="@+id/report"
+            android:title="@string/report"/>
+
+        <item
             android:id="@+id/replay_tuto_menu"
             android:title="@string/replay_tuto"
             android:visible="false"/>

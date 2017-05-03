@@ -47,6 +47,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import com.mapbox.mapboxsdk.location.LocationServices;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.jawg.osmcontributor.BuildConfig;
@@ -513,6 +515,10 @@ public class MapActivity extends AppCompatActivity {
             case R.id.about_menu:
                 startAboutActivity();
                 break;
+            case R.id.report:
+                startNewReportActivity();
+                break;
+
         }
     }
 
@@ -540,7 +546,14 @@ public class MapActivity extends AppCompatActivity {
 
     private void startAboutActivity() {
         drawerLayout.closeDrawer(navigationView);
+
         Intent intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
+    }
+
+    private void startNewReportActivity() {
+        drawerLayout.closeDrawer(navigationView);
+        Intent intent = new Intent(this, NewReportActivity.class);
         startActivity(intent);
     }
 
