@@ -21,11 +21,23 @@ package io.jawg.osmcontributor;
 import android.app.Application;
 import android.test.ApplicationTestCase;
 
+import org.osmdroid.util.GeoPoint;
+
+import io.jawg.osmcontributor.api.RouteAPI;
+
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
+@RunWith(AndroidJUnit4.class)
 public class ApplicationTest extends ApplicationTestCase<Application> {
     public ApplicationTest() {
         super(Application.class);
+    }
+
+    public void testCoordinates() throws Exception {
+        GeoPoint st = new GeoPoint(45.7796372, 4.8750303);
+        GeoPoint end = new GeoPoint(45.7833407, 4.8722943);
+
+        RouteAPI.getRoute(st, end);
     }
 }
