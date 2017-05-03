@@ -196,7 +196,7 @@ public class NewReportActivity extends AppCompatActivity {
                     CreateNewReportEvent event = new CreateNewReportEvent(issueTitle, issueDescription, loc.getLatitude(), loc.getLongitude(), imageFilePath);
 
                     eventBus.post(event);   //The event is posted, it will be carried to the ReportAPI class
-                    parent.onDestroy();
+                    parent.finish();
                 } else {
                     //TODO there is something wrong with the gps
                 }
