@@ -19,6 +19,7 @@
 package io.jawg.osmcontributor.ui.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -43,6 +44,7 @@ import io.jawg.osmcontributor.OsmTemplateApplication;
 import io.jawg.osmcontributor.R;
 import io.jawg.osmcontributor.ui.adapters.SearchableAdapter;
 import io.jawg.osmcontributor.ui.adapters.item.TagItem;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class PickValueActivity extends AppCompatActivity {
     public static final int PICK_VALUE_ACTIVITY_CODE = 1;
@@ -68,7 +70,13 @@ public class PickValueActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ((OsmTemplateApplication) getApplication()).init(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pick_value);
         ((OsmTemplateApplication) getApplication()).getOsmTemplateComponent().inject(this);

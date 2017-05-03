@@ -78,7 +78,12 @@
             android:title="@string/title_activity_my_preferences"/>
 
         <item
+            android:id="@+id/contribute_menu"
+            android:title="@string/contribute_title" />
+
+        <item
             android:id="@+id/about_menu"
             android:title="@string/about_title"/>
+
     </group>
 </menu>

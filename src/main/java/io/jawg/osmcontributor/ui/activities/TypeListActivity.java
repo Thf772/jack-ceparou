@@ -18,6 +18,7 @@
  */
 package io.jawg.osmcontributor.ui.activities;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
@@ -62,6 +63,7 @@ import io.jawg.osmcontributor.utils.helper.DragSwipeItemTouchHelperCallback;
 import io.jawg.osmcontributor.utils.helper.SwipeItemTouchHelperCallback;
 import io.jawg.osmcontributor.utils.StringUtils;
 import timber.log.Timber;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class TypeListActivity extends AppCompatActivity implements PoiTypeTagAdapter.OnStartDragListener {
 
@@ -106,7 +108,13 @@ public class TypeListActivity extends AppCompatActivity implements PoiTypeTagAda
     private String filterConstraint;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
+        ((OsmTemplateApplication) getApplication()).init(this);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_type_list);

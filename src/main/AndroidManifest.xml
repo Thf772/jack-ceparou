@@ -20,6 +20,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="io.jawg.osmcontributor">
 
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -33,7 +34,7 @@
         android:name=".OsmTemplateApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
-        android:icon="@mipmap/icon"
+        android:icon="@drawable/logo"
         android:label="@string/name"
         android:theme="@style/AppTheme"
         tools:replace="android:label">
@@ -58,6 +59,7 @@
         <activity
             android:name=".ui.activities.MapActivity"
             android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme"
             android:label="@string/name" />
         <activity
             android:name=".ui.activities.EditPoiActivity"
@@ -68,9 +70,6 @@
         <activity
             android:name=".ui.activities.LoadProfileActivity"
             android:label="@string/profile_load" />
-        <activity
-            android:name=".ui.activities.MyPreferencesActivity"
-            android:label="@string/title_activity_my_preferences" />
         <activity
             android:name=".ui.activities.TypeListActivity"
             android:label="@string/manage_poi_types" />
@@ -83,6 +82,15 @@
         <activity
             android:name=".ui.activities.AboutActivity"
             android:label="@string/title_activity_about" />
+        <activity
+            android:name=".setting.activities.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".ui.activities.MapActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.activities.MapActivity" />
+        </activity>
 
         <service android:name="com.mapbox.mapboxsdk.telemetry.TelemetryService" />
 
@@ -118,7 +126,6 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="fd3bf78e94fa9be288a9f662f853e9c8d6ce26c3" />
-
     </application>
 
 </manifest>

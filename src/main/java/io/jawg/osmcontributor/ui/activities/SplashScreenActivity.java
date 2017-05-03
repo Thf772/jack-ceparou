@@ -19,6 +19,7 @@
 package io.jawg.osmcontributor.ui.activities;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -61,6 +62,7 @@ import io.jawg.osmcontributor.ui.events.map.ArpiBitmapsPrecomputedEvent;
 import io.jawg.osmcontributor.ui.events.map.PrecomputeArpiBitmapsEvent;
 import io.jawg.osmcontributor.ui.utils.views.EventCountDownTimer;
 import timber.log.Timber;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
@@ -93,6 +95,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     /*=========================================*/
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        ((OsmTemplateApplication) getApplication()).init(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
@@ -252,6 +255,11 @@ public class SplashScreenActivity extends AppCompatActivity {
                 initEvent();
             }
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     /**

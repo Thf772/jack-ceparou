@@ -1,27 +1,7 @@
-/**
- * Copyright (C) 2016 eBusiness Information
- *
- * This file is part of OSM Contributor.
- *
- * OSM Contributor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OSM Contributor is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OSM Contributor.  If not, see <http://www.gnu.org/licenses/>.
- */
-package io.jawg.osmcontributor.ui.fragments;
+package io.jawg.osmcontributor.setting.fragment;
 
 import android.accounts.AccountManager;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -29,7 +9,6 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.google.android.gms.common.AccountPicker;
@@ -43,10 +22,9 @@ import javax.inject.Inject;
 import io.jawg.osmcontributor.OsmTemplateApplication;
 import io.jawg.osmcontributor.R;
 import io.jawg.osmcontributor.model.events.DatabaseResetFinishedEvent;
-import io.jawg.osmcontributor.model.events.ResetDatabaseEvent;
-import io.jawg.osmcontributor.model.events.ResetTypeDatabaseEvent;
 import io.jawg.osmcontributor.rest.events.GoogleAuthenticatedEvent;
 import io.jawg.osmcontributor.rest.security.GoogleOAuthManager;
+import io.jawg.osmcontributor.setting.activities.SettingsActivity;
 import io.jawg.osmcontributor.ui.events.login.AttemptLoginEvent;
 import io.jawg.osmcontributor.ui.events.login.ErrorLoginEvent;
 import io.jawg.osmcontributor.ui.events.login.UpdateGoogleCredentialsEvent;
@@ -54,14 +32,17 @@ import io.jawg.osmcontributor.ui.events.login.ValidLoginEvent;
 import io.jawg.osmcontributor.utils.ConfigManager;
 import io.jawg.osmcontributor.utils.StringUtils;
 
-public class MyPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+/**
+ * Created by Flo Macé on 03/05/2017.
+ */
+
+public class ConnectionFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+
     private static final int PICK_ACCOUNT_CODE = 1;
-    public static final int RC_SIGN_IN = 2;
     private String loginKey;
     private String passwordKey;
     private Preference loginPref;
     private Preference passwordPref;
-    private Preference resetTypePref;
     private Preference googleConnectPref;
 
     @Inject
@@ -80,10 +61,10 @@ public class MyPreferenceFragment extends PreferenceFragment implements SharedPr
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((OsmTemplateApplication) getActivity().getApplication()).getOsmTemplateComponent().inject(this);
-        addPreferencesFromResource(R.xml.preferences);
+        addPreferencesFromResource(R.xml.pref_connection);
         setHasOptionsMenu(true);
 
-        AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
+        SettingsActivity appCompatActivity = (SettingsActivity) getActivity();
         if (appCompatActivity != null) {
             ActionBar actionBar = appCompatActivity.getSupportActionBar();
             if (actionBar != null) {
@@ -91,82 +72,17 @@ public class MyPreferenceFragment extends PreferenceFragment implements SharedPr
             }
         }
 
+        Preference preference = findPreference(getString(R.string.shared_prefs_server_key));
+        preference.setSummary(configManager.getBasePoiApiUrl());
+
         loginKey = getString(R.string.shared_prefs_login);
         passwordKey = getString(R.string.shared_prefs_password);
 
         loginPref = findPreference(loginKey);
         passwordPref = findPreference(passwordKey);
 
-        Preference preference = findPreference(getString(R.string.shared_prefs_server_key));
-        preference.setSummary(configManager.getBasePoiApiUrl());
-
         updateLoginSummary(getPreferenceScreen().getSharedPreferences());
         updatePasswordSummary(getPreferenceScreen().getSharedPreferences());
-
-        Preference h2geoPreference = findPreference(getString(R.string.shared_prefs_h2geo_version));
-        h2geoPreference.setTitle(sharedPreferences.getString(getString(R.string.shared_prefs_h2geo_version), ""));
-        h2geoPreference.setSummary(sharedPreferences.getString(getString(R.string.shared_prefs_h2geo_date), ""));
-
-        Preference resetPreference = findPreference(getString(R.string.shared_prefs_reset));
-        resetPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                new AlertDialog.Builder(getActivity())
-                        .setMessage(R.string.reset_dialog_message)
-                        .setPositiveButton(R.string.reset_dialog_positive_button, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                bus.post(new ResetDatabaseEvent());
-                                dialog.dismiss();
-                            }
-                        })
-                        .setNegativeButton(R.string.reset_dialog_negative_button, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        }).show();
-                return false;
-            }
-        });
-
-        resetTypePref = findPreference(getString(R.string.shared_prefs_reset_type));
-        resetTypePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                new AlertDialog.Builder(getActivity())
-                        .setMessage(R.string.reset_dialog_message)
-                        .setPositiveButton(R.string.reset_dialog_positive_button, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                bus.post(new ResetTypeDatabaseEvent());
-                                dialog.dismiss();
-                            }
-                        })
-                        .setNegativeButton(R.string.reset_dialog_negative_button, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        }).show();
-                return false;
-            }
-        });
-
-        findPreference(getString(R.string.shared_prefs_expert_mode)).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                if (sharedPreferences.getBoolean(getString(R.string.shared_prefs_expert_mode), false)) {
-                    new AlertDialog.Builder(getActivity())
-                            .setCancelable(false)
-                            .setMessage(getString(R.string.expert_mode_dialog))
-                            .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            }).show();
-                }
-                return false;
-            }
-        });
-
 
         googleConnectPref = findPreference(getString(R.string.shared_prefs_google_connection_key));
         googleConnectPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -181,9 +97,6 @@ public class MyPreferenceFragment extends PreferenceFragment implements SharedPr
             }
         });
 
-        if (!sharedPreferences.getBoolean(getString(R.string.shared_prefs_expert_mode), false)) {
-            getPreferenceScreen().removePreference(resetTypePref);
-        }
     }
 
     private static final String TAG = "MyPreferenceFragment";
@@ -227,14 +140,6 @@ public class MyPreferenceFragment extends PreferenceFragment implements SharedPr
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         updatePrefsSummary(sharedPreferences, key);
-        // Show or hide the reset type preference depending on the value of the expert mode preference.
-        if (getString(R.string.shared_prefs_expert_mode).equals(key)) {
-            if (sharedPreferences.getBoolean(key, false)) {
-                getPreferenceScreen().addPreference(resetTypePref);
-            } else {
-                getPreferenceScreen().removePreference(resetTypePref);
-            }
-        }
     }
 
     private void updateLoginSummary(SharedPreferences sharedPreferences) {

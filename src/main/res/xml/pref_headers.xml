@@ -1,0 +1,32 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- These settings headers are only used on tablets. -->
+
+    <header
+        android:fragment="io.jawg.osmcontributor.setting.fragment.GeneralPreferenceFragment"
+        android:icon="@drawable/alert_circle"
+        android:title="@string/pref_header_general" />
+
+    <header
+        android:fragment="io.jawg.osmcontributor.setting.fragment.AccessibilityFragment"
+        android:icon="@drawable/human"
+        android:title="@string/pref_header_accessibilty" />
+
+    <header
+        android:fragment="io.jawg.osmcontributor.setting.fragment.ConnectionFragment"
+        android:icon="@drawable/account_settings_variant"
+        android:title="@string/pref_header_Compte" />
+
+    <header
+        android:fragment="io.jawg.osmcontributor.setting.fragment.DataSyncPreferenceFragment"
+        android:icon="@drawable/sync"
+        android:title="@string/pref_header_data_sync" />
+
+    <header
+        android:fragment="io.jawg.osmcontributor.setting.fragment.NotificationPreferenceFragment"
+        android:icon="@drawable/bell"
+        android:title="@string/pref_header_notifications" />
+
+
+
+</preference-headers>

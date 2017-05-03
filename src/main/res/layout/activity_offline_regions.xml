@@ -85,16 +85,16 @@
                 app:menu_icon="@drawable/pencil"
                 app:menu_labels_position="left"
                 app:menu_labels_style="@style/menu_labels_style"
-                app:menu_colorNormal="@color/material_amber_900"
-                app:menu_colorPressed="@color/material_amber_800"
+                app:menu_colorNormal="@color/material_grey_800"
+                app:menu_colorPressed="@color/material_grey_600"
                 app:menu_colorRipple="@color/material_amber_800">
 
                 <com.github.clans.fab.FloatingActionButton
                     android:id="@+id/delete_region_floating_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:fab_colorNormal="@color/material_amber_900"
-                    app:fab_colorPressed="@color/material_amber_800"
+                    app:fab_colorNormal="@color/material_yellow_800"
+                    app:fab_colorPressed="@color/material_yellow_500"
                     android:src="@drawable/delete"
                     app:fab_size="mini"
                     app:fab_label="@string/delete" />
@@ -103,8 +103,8 @@
                     android:id="@+id/rename_region_floating_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:fab_colorNormal="@color/material_amber_900"
-                    app:fab_colorPressed="@color/material_amber_800"
+                    app:fab_colorNormal="@color/material_yellow_800"
+                    app:fab_colorPressed="@color/material_yellow_500"
                     android:src="@drawable/ic_rename"
                     app:fab_size="mini"
                     app:fab_label="@string/rename" />
@@ -116,8 +116,8 @@
                     android:layout_gravity="bottom|right"
                     android:src="@drawable/ic_file_download_white"
                     app:fab_size="mini"
-                    app:fab_colorNormal="@color/material_green_700"
-                    app:fab_colorPressed="@color/material_green_500"
+                    app:fab_colorNormal="@color/material_grey_800"
+                    app:fab_colorPressed="@color/material_grey_600"
                     app:fab_label="@string/download"/>
 
             </com.github.clans.fab.FloatingActionMenu>
@@ -137,8 +137,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|right"
                 android:src="@drawable/ic_file_download_white"
-                app:fab_colorNormal="@color/material_green_700"
-                app:fab_colorPressed="@color/material_green_500"
+                app:fab_colorNormal="@color/colorPrimaryDark"
+                app:fab_colorPressed="@color/colorPrimary"
                 app:fab_label="@string/download"/>
         </LinearLayout>
     </FrameLayout>

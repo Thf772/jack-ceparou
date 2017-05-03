@@ -20,6 +20,7 @@ package io.jawg.osmcontributor.ui.activities;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -82,6 +83,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import retrofit.mime.TypedFile;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class PhotoActivity extends AppCompatActivity {
 
@@ -158,7 +160,13 @@ public class PhotoActivity extends AppCompatActivity {
     private int nbTry;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ((OsmTemplateApplication) getApplication()).init(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
         ButterKnife.bind(this);

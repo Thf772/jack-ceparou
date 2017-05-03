@@ -46,6 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/splash_title"
         android:layout_centerHorizontal="true"
+        android:textColor="@android:color/white"
         android:textSize="24sp"
         app:typeface="Roboto-Light.ttf"/>
 
@@ -56,8 +57,7 @@
         android:layout_below="@+id/mapsquare"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:src="@drawable/splash"/>
-
+        android:src="@drawable/jack_c"/>
 
     <io.jawg.osmcontributor.ui.utils.views.customs.TypeFaceTextView
         android:id="@+id/sync"

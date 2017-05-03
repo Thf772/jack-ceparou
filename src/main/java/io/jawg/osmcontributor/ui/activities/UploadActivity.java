@@ -19,6 +19,7 @@
 package io.jawg.osmcontributor.ui.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
@@ -67,6 +68,7 @@ import io.jawg.osmcontributor.ui.managers.tutorial.TutorialManager;
 import io.jawg.osmcontributor.utils.OsmAnswers;
 import io.jawg.osmcontributor.utils.helper.SwipeItemTouchHelperCallback;
 import io.jawg.osmcontributor.utils.upload.PoiUpdateWrapper;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class UploadActivity extends AppCompatActivity implements PoisAdapter.OnItemRemovedListener {
 
@@ -109,6 +111,7 @@ public class UploadActivity extends AppCompatActivity implements PoisAdapter.OnI
     /*=========================================*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ((OsmTemplateApplication) getApplication()).init(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
         ((OsmTemplateApplication) getApplication()).getOsmTemplateComponent().inject(this);
@@ -140,6 +143,11 @@ public class UploadActivity extends AppCompatActivity implements PoisAdapter.OnI
                 syncTutoManager.launchTuto(poisListView.getChildAt(0).findViewById(R.id.revert), findViewById(R.id.comment_edit_text), findViewById(R.id.action_confirm));
             }
         }, 500);
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     @Override

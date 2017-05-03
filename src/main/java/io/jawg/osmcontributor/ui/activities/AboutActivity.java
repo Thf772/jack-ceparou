@@ -18,6 +18,7 @@
  */
 package io.jawg.osmcontributor.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,7 +34,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.psdev.licensesdialog.LicensesDialog;
 import io.jawg.osmcontributor.BuildConfig;
+import io.jawg.osmcontributor.OsmTemplateApplication;
 import io.jawg.osmcontributor.R;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class AboutActivity extends AppCompatActivity {
 
@@ -56,7 +59,13 @@ public class AboutActivity extends AppCompatActivity {
     TextView version;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ((OsmTemplateApplication) getApplication()).init(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
         ButterKnife.bind(this);

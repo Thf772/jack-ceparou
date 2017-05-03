@@ -18,6 +18,7 @@
  */
 package io.jawg.osmcontributor.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -61,6 +62,7 @@ import io.jawg.osmcontributor.service.OfflineRegionDownloadService;
 import io.jawg.osmcontributor.ui.adapters.ProfileAdapter;
 import io.jawg.osmcontributor.ui.events.presets.PleaseDownloadPresetEvent;
 import io.jawg.osmcontributor.ui.events.presets.PleaseDownloadPresetListEvent;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class LoadProfileActivity extends AppCompatActivity
         implements ProfileAdapter.ProfileSelectedListener {
@@ -83,11 +85,17 @@ public class LoadProfileActivity extends AppCompatActivity
     @Inject
     H2GeoPresetsItemMapper mapper;
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
     private ProfileAdapter profileAdapter;
     private boolean databaseReseted, regionDownloadStart;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        ((OsmTemplateApplication) getApplication()).init(this);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_load_profile);
