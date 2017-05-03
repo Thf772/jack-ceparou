@@ -171,7 +171,7 @@ public class OsmTemplateApplication extends Application {
     private void createNotification() {
         notification =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.human)
+                        .setSmallIcon(R.drawable.notification_icon)
                         .setContentTitle(getResources().getString(R.string.notification_message))
                         .setContentText(getResources().getString(R.string.notification_message_values));
 
