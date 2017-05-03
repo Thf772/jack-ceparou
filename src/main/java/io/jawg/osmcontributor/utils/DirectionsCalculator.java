@@ -43,10 +43,6 @@ public class DirectionsCalculator {
         this.events = events;
     }
 
-    public void setBus(EventBus events) {
-        this.events = events;
-    }
-
     ////////////////////////////////////////////////////////////////////
     /////     Getters and setters                                  /////
     ////////////////////////////////////////////////////////////////////
@@ -80,7 +76,7 @@ public class DirectionsCalculator {
     ////////////////////////////////////////////////////////////////////
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public boolean calculateDirections(StartDirectionsCalculationEvent ev) throws ServicesException {
+    public void calculateDirections(StartDirectionsCalculationEvent ev) {
         if (!this.isReady()) {
             // TODO Error signalling
             //events.post(new DoneCalculatingDirectionsEvent(null));
@@ -121,10 +117,12 @@ public class DirectionsCalculator {
             public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
                 if (response.body() == null) {
                     // TODO Error signalling
-                    events.post(new DoneCalculatingDirectionsEvent(null));
+                    //events.post(new DoneCalculatingDirectionsEvent(null));
+                    throw new NullPointerException("No routes");
                 } else if (response.body().getRoutes().size() < 1) {
                     // TODO Error signalling
-                    events.post(new DoneCalculatingDirectionsEvent(null));
+                    //events.post(new DoneCalculatingDirectionsEvent(null));
+                    throw new NullPointerException("No routes");
                 } else {
                     // TODO On success
                     events.post(new DoneCalculatingDirectionsEvent(response.body().getRoutes().get(0)));
@@ -138,6 +136,5 @@ public class DirectionsCalculator {
                 throw new RuntimeException("Failure on getting directions");
             }
         });
-        return true;
     }
 }
