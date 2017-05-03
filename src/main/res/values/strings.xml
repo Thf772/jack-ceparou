@@ -193,6 +193,11 @@
 
     <!-- Filter drawer -->
     <string name="filters">Filters</string>
+    <string name="filter_accessibility">Accessibility</string>
+    <string name="filter_accessibility_yes">Accessible</string>
+    <string name="filter_accessibility_limited">Hardly Accessible</string>
+    <string name="filter_accessibility_no">Not Accessible</string>
+    <string name="filter_accessibility_unknown">Accessibility Unknown</string>
     <string name="filter_notes">Notes</string>
     <string name="filter_note_open">Open</string>
     <string name="filter_note_closed">Closed</string>
