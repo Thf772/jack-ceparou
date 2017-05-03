@@ -56,7 +56,7 @@ public class NewReportActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_report);
         ButterKnife.bind(this);
         eventBus = EventBus.getDefault();
-        reportAPI = new ReportAPI();
+        reportAPI = new ReportAPI(this);
         eventBus.register(reportAPI);
 
         imageCapture = new ImageCapture(this);

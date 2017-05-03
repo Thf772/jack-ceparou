@@ -1,6 +1,14 @@
 package io.jawg.osmcontributor.api;
 
+import android.content.Context;
 import android.util.Log;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -19,9 +27,11 @@ import io.jawg.osmcontributor.model.event.CreateNewReportEvent;
  */
 public class ReportAPI {
     public static final String SERVER_ADDRESS = "http://jcerv.heptacle.fr/";
-    public static final String CREATE_REPORT_ADDRESS = "http://jcerv.heptacle.fr/api/createReport";
-    public static final String UPDATE_REPORT_ADDRESS = "http://jcerv.heptacle.fr/api/updateReport";
+    public static final String CREATE_REPORT_ADDRESS = "http://jcerv.heptacle.fr/api/createReport?";
+    public static final String UPDATE_REPORT_ADDRESS = "http://jcerv.heptacle.fr/api/updateReport?";
     public static final String UPLOAD_IMAGE_ADDRESS = "http://jcerv.heptacle.fr/api/uploadImage/";
+
+    RequestQueue queue;
 
     /**
      * This method will call the server and create a new report.
@@ -31,28 +41,40 @@ public class ReportAPI {
     {
         Log.w("REPORT API", "Event to create report carried succsessfully");
 
+        String charset = "UTF-8";
+        String query;
         try {
-            String charset = "UTF-8";
-            String query = String.format("type=%s&" + "latitude=%s&" + "longitude=%s&" + "titre=%s&" + "details=%s",
+            query = String.format("type=%s&" + "latitude=%s&" + "longitude=%s&" + "titre=%s&" + "details=%s",
                     URLEncoder.encode("OB",charset),
                     URLEncoder.encode(event.getLatitude().toString(),charset),
                     URLEncoder.encode(event.getLongitude().toString(),charset),
                     URLEncoder.encode(event.getTitle(),charset),
                     URLEncoder.encode(event.getDescription(),charset));
 
-            //Creation of the http request
-            URLConnection connection = new URL(CREATE_REPORT_ADDRESS + query).openConnection();
-            connection.setDoOutput(true); // Triggers POST.
-            connection.setRequestProperty("Accept-Charset", charset);
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + charset);
+            // Request a string response from the provided URL.
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, CREATE_REPORT_ADDRESS + query,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
 
-            InputStream response = connection.getInputStream();
+                            Log.w("RESPONSE",response);
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.w("RESPONSE_ERROR", error);
+                }
+            });
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            //TODO Send a nice error message to the user
-        } catch (Exception e) {
+            queue.add(stringRequest);
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+    }
+
+    public void onGet
+
+    public ReportAPI (Context c) {
+        queue = Volley.newRequestQueue(c);
     }
 }

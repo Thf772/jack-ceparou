@@ -267,6 +267,7 @@ dependencies {
     compile("com.mapbox.mapboxsdk:mapbox-android-services:$mapboxServicesVersion@aar") {
         transitive = true
     }
+    compile 'com.android.volley:volley:1.0.0'
     compile "de.psdev.licensesdialog:licensesdialog:$licensesdialogVersion"
     compile(name: "arpigl-release-$arpiglVersion", ext: "aar")
 
