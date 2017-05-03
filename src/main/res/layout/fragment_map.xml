@@ -33,7 +33,6 @@
         app:rotate_enabled="true"
         app:zoom_enabled="true" />
 
-
     <RelativeLayout
         android:id="@+id/progressbar"
         android:layout_width="match_parent"
@@ -219,7 +218,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="@dimen/fab_margin"
-        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:layout_marginLeft="@dimen/fab_margin"
         android:layout_marginRight="@dimen/fab_margin">
 
         <com.github.clans.fab.FloatingActionMenu
@@ -253,16 +253,15 @@
             app:fab_colorRipple="@color/floating_ab_ripple" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/query_button"
+            android:id="@+id/route_mode_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_magnify_grey600_24dp"
+            android:src="@drawable/ic_directions_grey600_24dp"
             app:fab_colorNormal="@color/floating_ab_normal"
             app:fab_colorPressed="@color/floating_ab_pressed"
             app:fab_colorRipple="@color/floating_ab_ripple"
-            android:layout_above="@+id/localisation"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"/>
 
     </RelativeLayout>
 </RelativeLayout>

@@ -83,6 +83,10 @@ public enum MapMode {
     ARPIGL(new MapModeProperties("ArpiGl view")
             .lockDrawer()),
 
+    ROUTE_MODE(new MapModeProperties("Route mode")
+            .title(R.string.title_route_mode)
+            .showButtons()),
+
     DEFAULT(new MapModeProperties("Default mode")
             .showAddPoiFab()
             .showDownloadArea()
@@ -116,6 +120,9 @@ public enum MapMode {
         private boolean editColor = false;
         private boolean menuBtn = false;
         private int title = R.string.name;
+
+        //Buttons
+        private boolean showButtons = false;
 
         public MapModeProperties unSelectIcon() {
             this.unSelectIcon = true;
@@ -186,6 +193,11 @@ public enum MapMode {
             return this;
         }
 
+        public MapModeProperties showButtons() {
+            this.showButtons = true;
+            return this;
+        }
+
         public boolean isUnSelectIcon() {
             return unSelectIcon;
         }
@@ -237,6 +249,8 @@ public enum MapMode {
         public boolean isMenuBtn() {
             return menuBtn;
         }
+
+        public boolean isShowButtons() { return showButtons; }
 
         public String getTitle(Context context) {
             return context.getResources().getString(title);

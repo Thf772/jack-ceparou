@@ -260,12 +260,13 @@ dependencies {
     compile "com.flickr4java:flickr4java:$flickr4javaVersion"
     compile "com.github.scribejava:scribejava-apis:$scribeJavaVersion"
 
-    compile("com.mapbox.mapboxsdk:mapbox-android-sdk:$mapboxVersion@aar") {
-        transitive = true
+    compile ("com.mapbox.mapboxsdk:mapbox-android-sdk:$mapboxVersion@aar"){
+        transitive=true
     }
     compile("com.mapbox.mapboxsdk:mapbox-android-services:$mapboxServicesVersion@aar") {
         transitive = true
     }
+
     compile "de.psdev.licensesdialog:licensesdialog:$licensesdialogVersion"
     compile(name: "arpigl-release-$arpiglVersion", ext: "aar")
 

@@ -39,6 +39,7 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -124,6 +125,7 @@ import io.jawg.osmcontributor.ui.events.map.MapCenterValueEvent;
 import io.jawg.osmcontributor.ui.events.map.NewNoteCreatedEvent;
 import io.jawg.osmcontributor.ui.events.map.NewPoiTypeSelected;
 import io.jawg.osmcontributor.ui.events.map.OnBackPressedMapEvent;
+import io.jawg.osmcontributor.ui.events.map.POIMarkerClick;
 import io.jawg.osmcontributor.ui.events.map.PleaseApplyNoteFilterEvent;
 import io.jawg.osmcontributor.ui.events.map.PleaseApplyPoiFilter;
 import io.jawg.osmcontributor.ui.events.map.PleaseChangePoiPosition;
@@ -211,6 +213,9 @@ public class MapFragment extends Fragment {
 
     private Location lastLocation;
 
+    private boolean route_mode;
+    private List<Poi> selectedPois;
+
     @Inject
     BitmapHandler bitmapHandler;
 
@@ -276,6 +281,7 @@ public class MapFragment extends Fragment {
         instantiateLevelBar();
         instantiatePoiTypePicker();
         instantiateCopyrightBar();
+        instantiateSelectedPois();
 
         eventBus.register(this);
         eventBus.register(presenter);
@@ -351,6 +357,11 @@ public class MapFragment extends Fragment {
         mapboxListener.listen(mapboxMap, mapView);
 
         mapboxMap.getMarkerViewManager().addMarkerViewAdapter(new LocationMarkerViewAdapter(getActivity().getApplicationContext()));
+    }
+
+    private void instantiateSelectedPois()
+    {
+        selectedPois = new ArrayList<>();
     }
 
     private void instantiateMapView(final Bundle savedInstanceState) {
@@ -606,10 +617,12 @@ public class MapFragment extends Fragment {
                 newPoiPosition = mapboxMap.getCameraPosition().target;
                 eventBus.post(new PleaseApplyPoiPositionChange(newPoiPosition, poi.getId()));
                 markerSelected.setPosition(newPoiPosition);
+                Log.w("Unselect", "confirmPosition");
                 markerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, true))));
                 poi.setUpdated(true);
                 mapboxMap.updateMarker(markerSelected);
                 switchMode(MapMode.DETAIL_POI);
+
                 break;
 
             case NODE_REF_POSITION_EDITION:
@@ -617,6 +630,7 @@ public class MapFragment extends Fragment {
                 newPoiPosition = mapboxMap.getCameraPosition().target;
                 eventBus.post(new PleaseApplyNodeRefPositionChange(newPoiPosition, poiNodeRef.getId()));
                 wayMarkerSelected.setPosition(newPoiPosition);
+                Log.w("Unselect", "confirmPosition way");
                 wayMarkerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getNodeRefBitmap(PoiNodeRef.State.SELECTED)));
                 removePolyline(editionPolyline);
                 switchMode(MapMode.WAY_EDITION);
@@ -764,6 +778,15 @@ public class MapFragment extends Fragment {
                 loadAreaForEdition();
                 break;
 
+            case ROUTE_MODE:
+                if (properties.isShowButtons())
+                {
+                    route_mode_button.setVisibility(View.VISIBLE);
+                    floatingButtonLocalisation.setVisibility(View.VISIBLE);
+                    addPoiFloatingMenu.setVisibility(View.VISIBLE);
+                }
+                break;
+
             default:
                 poiTypeSelected = null;
                 poiTypeEditText.setText("");
@@ -846,6 +869,31 @@ public class MapFragment extends Fragment {
     }
 
     public void unselectMarker() {
+        Log.w("Unselect", "unselectMarker");
+        if (route_mode)
+        {
+            if (markerSelected != null)
+            {
+                if (markerSelected.getType() == LocationMarkerView.MarkerType.POI)
+                {
+                    Poi poi = (Poi)markerSelected.getRelatedObject();
+
+                    if (selectedPois.contains(poi))
+                    {
+//                        ForceUnselectMarker();
+                    }
+                }
+            }
+        }
+        else
+        {
+            forceUnselectMarker();
+        }
+    }
+
+    private void forceUnselectMarker()
+    {
+        Log.w("Force", "ok");
         Iterator it = markersPoi.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
@@ -904,6 +952,7 @@ public class MapFragment extends Fragment {
 
     public void unselectWayMarker() {
         if (wayMarkerSelected != null) {
+            Log.w("Unselect", "unselectWayMarker");
             wayMarkerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getNodeRefBitmap(PoiNodeRef.State.NONE)));
         }
     }
@@ -972,6 +1021,8 @@ public class MapFragment extends Fragment {
     public void addPoi(LocationMarkerViewOptions<Poi> marker) {
         markersPoi.put(marker.getMarker().getRelatedObject().getId(), marker);
         addPoiMarkerDependingOnFilters(marker);
+
+
     }
 
     public void addNote(LocationMarkerViewOptions<Note> marker) {
@@ -1110,6 +1161,7 @@ public class MapFragment extends Fragment {
 
     public void selectWayMarker() {
         editNodeRefPosition.setVisibility(View.VISIBLE);
+        Log.w("Unselect", "selectWayMarker");
         wayMarkerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getNodeRefBitmap(PoiNodeRef.State.SELECTED)));
         changeMapPositionSmooth(wayMarkerSelected.getPosition());
     }
@@ -1187,6 +1239,7 @@ public class MapFragment extends Fragment {
         savePoiTypeId = 0;
         Bitmap bitmap;
 
+        Log.w("Unselect", "poiTypeSelected");
         bitmap = bitmapHandler.getMarkerBitmap(poiType, Poi.computeState(false, true, false));
         if (poiTypeHidden.contains(poiType.getId())) {
             poiTypeHidden.remove(poiType.getId());
@@ -1439,6 +1492,52 @@ public class MapFragment extends Fragment {
     }
 
     /*-----------------------------------------------------------
+    * ROUTE MODE
+    *---------------------------------------------------------*/
+
+    @BindView(R.id.route_mode_button)
+    FloatingActionButton route_mode_button;
+
+    @OnClick(R.id.route_mode_button)
+    public void toggleRouteMode()
+    {
+        route_mode = !route_mode;
+
+        if (route_mode)
+        {
+            selectedPois.clear();
+            Log.w("Route mode", "ok");
+        }
+        else
+        {
+            Log.w("Selected POIS", String.valueOf(selectedPois.size()));
+        }
+    }
+
+    @Subscribe
+    public void onPOIMarkerClick(POIMarkerClick event)
+    {
+        LocationMarkerView<Poi> marker = event.getMarker();
+        Poi poi = (Poi) marker.getRelatedObject();
+
+        Log.w("POI", "Id : " + String.valueOf(poi.getId()));
+
+        if (route_mode)
+        {
+            if (selectedPois.contains(poi))
+            {
+                Log.w("POI", "Remove");
+                selectedPois.remove(poi);
+            }
+            else
+            {
+                Log.w("POI", "Add");
+                selectedPois.add(poi);
+            }
+        }
+    }
+
+    /*-----------------------------------------------------------
     * MAP UTILS
     *---------------------------------------------------------*/
     @BindView(R.id.localisation)
@@ -1453,15 +1552,6 @@ public class MapFragment extends Fragment {
         } else {
             Toast.makeText(getActivity(), getResources().getString(R.string.location_not_found), Toast.LENGTH_SHORT).show();
         }
-    }
-
-    @BindView(R.id.query_button)
-    FloatingActionButton query_button;
-
-    @OnClick(R.id.query_button)
-    public void showSearchBar()
-    {
-        
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -1526,6 +1616,7 @@ public class MapFragment extends Fragment {
     }
 
     public void hideMarker(Marker marker) {
+        Log.w("Unselect", "hideMarker");
         marker.setIcon(IconFactory.getInstance(getActivity()).fromResource(R.drawable.hidden_marker));
     }
 

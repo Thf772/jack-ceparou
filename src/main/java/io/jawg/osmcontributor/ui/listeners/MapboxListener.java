@@ -21,6 +21,7 @@ package io.jawg.osmcontributor.ui.listeners;
 import android.animation.ValueAnimator;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -39,6 +40,7 @@ import java.text.DecimalFormat;
 
 import io.jawg.osmcontributor.model.entities.Note;
 import io.jawg.osmcontributor.model.entities.Poi;
+import io.jawg.osmcontributor.ui.events.map.POIMarkerClick;
 import io.jawg.osmcontributor.ui.fragments.MapFragment;
 import io.jawg.osmcontributor.ui.utils.MapMode;
 import io.jawg.osmcontributor.ui.utils.ZoomAnimationGestureDetector;
@@ -252,11 +254,15 @@ public class MapboxListener {
     void onPoiMarkerClick(LocationMarkerView<Poi> marker) {
         Bitmap bitmap = mapFragment.getBitmapHandler().getMarkerBitmap(marker.getRelatedObject().getType(), Poi.computeState(true, false, false));
         if (bitmap != null) {
+            Log.w("Unselect", "onPoiMarkerClick");
             marker.setIcon(IconFactory.getInstance(mapFragment.getActivity()).fromBitmap(bitmap));
         }
         mapFragment.switchMode(MapMode.DETAIL_POI);
         mapFragment.changeMapPositionSmooth(marker.getPosition());
         mapFragment.setMarkerSelectedId(-1L);
+
+        POIMarkerClick event = new POIMarkerClick(marker);
+        eventBus.post(event);
     }
 
     /**
