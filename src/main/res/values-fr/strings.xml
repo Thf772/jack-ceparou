@@ -474,4 +474,5 @@ Il est conseillé d\'avoir une connexion Wifi pendant le téléchargement.\n\nVo
     <string name="pref_header_Compte">Compte</string>
     <string name="app_name_first_part">Jack</string>
     <string name="app_name_second_part">Céparou</string>
+    <string name="contribute_title">Contribuer</string>
 </resources>

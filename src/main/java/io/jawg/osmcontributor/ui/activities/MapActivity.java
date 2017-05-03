@@ -59,6 +59,7 @@ import io.jawg.osmcontributor.model.entities.PoiType;
 import io.jawg.osmcontributor.model.events.PleaseLoadPoiTypes;
 import io.jawg.osmcontributor.setting.activities.SettingsActivity;
 import io.jawg.osmcontributor.setting.dialog.NoticeDialogFragment;
+import io.jawg.osmcontributor.ui.activity.ContributeActivity;
 import io.jawg.osmcontributor.ui.events.login.UpdateFirstConnectionEvent;
 import io.jawg.osmcontributor.ui.events.map.ChangeMapModeEvent;
 import io.jawg.osmcontributor.ui.events.map.ChangesInDB;
@@ -547,6 +548,9 @@ public class MapActivity extends AppCompatActivity implements NoticeDialogFragme
             case R.id.about_menu:
                 startAboutActivity();
                 break;
+            case R.id.contribute_menu:
+                startContributeActivity();
+                break;
         }
     }
 
@@ -575,6 +579,12 @@ public class MapActivity extends AppCompatActivity implements NoticeDialogFragme
     private void startAboutActivity() {
         drawerLayout.closeDrawer(navigationView);
         Intent intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
+    }
+
+    private void startContributeActivity() {
+        drawerLayout.closeDrawer(navigationView);
+        Intent intent = new Intent(this, ContributeActivity.class);
         startActivity(intent);
     }
 

@@ -4,9 +4,12 @@ import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.ActionBar;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 import io.jawg.osmcontributor.R;
 import io.jawg.osmcontributor.setting.activities.SettingsActivity;
@@ -22,10 +25,6 @@ public class AccessibilityFragment extends PreferenceFragment implements SharedP
     private final String DYSLEXY_KEY = "dyslexy";
     private final String COLOR_BLIND_KEY = "color_blind";
     private final String FONT_SIZE_KEY = "font_size";
-
-    private Preference dyslexy;
-    private Preference fontSize;
-    private Preference colorBlind;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,7 +48,6 @@ public class AccessibilityFragment extends PreferenceFragment implements SharedP
         bindPreferenceSummaryToValue(findPreference("font_size"));
     }
 
-/*
     private void changeMapFont(String fontName) {
 //        curl "https://api.mapbox.com/styles/v1/{username}/{style_id}?access_token=your-access-token"
         retrieveMapBoxStyle();
@@ -71,7 +69,6 @@ public class AccessibilityFragment extends PreferenceFragment implements SharedP
     private void changeMapFontSize() {
 
     }
-*/
 
     @Override
     public void onResume() {
@@ -98,7 +95,7 @@ public class AccessibilityFragment extends PreferenceFragment implements SharedP
                     font = "fonts/arial.ttf";
                 }
                 ((SettingsActivity) getActivity()).setFont(font);
-//                changeMapFont(font);
+                changeMapFont(font);
                 break;
             case COLOR_BLIND_KEY:
 
