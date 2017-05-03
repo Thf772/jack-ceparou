@@ -1,8 +1,10 @@
 package io.jawg.osmcontributor.utils;
 
+import com.mapbox.services.commons.ServicesException;
 import com.mapbox.services.commons.models.Position;
 import com.mapbox.services.directions.v5.DirectionsCriteria;
 import com.mapbox.services.directions.v5.MapboxDirections;
+import com.mapbox.services.directions.v5.models.DirectionsResponse;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -10,8 +12,13 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import io.jawg.osmcontributor.BuildConfig;
 import io.jawg.osmcontributor.ui.events.map.DestinationSelectedEvent;
+import io.jawg.osmcontributor.ui.events.map.DirectionsCalculationFailureEvent;
+import io.jawg.osmcontributor.ui.events.map.DirectionsCalculationResponseEvent;
 import io.jawg.osmcontributor.ui.events.map.OriginSelectedEvent;
 import io.jawg.osmcontributor.ui.events.map.StartDirectionsCalculationEvent;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * @brief Calculates the directions between two POIs
@@ -97,7 +104,7 @@ public class DirectionsCalculator {
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onStartDirectionsCalculationEvent(StartDirectionsCalculationEvent e) {
-
+        this.calculateDirections();
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -106,13 +113,38 @@ public class DirectionsCalculator {
 
     public void calculateDirections() {
         if (!this.isReady()) return; // TODO Error signalling
-        MapboxDirections.Builder builder = new MapboxDirections.Builder()
-                .setOrigin(this.getOrigin())
-                .setDestination(this.getDestination())
-                .setOverview(DirectionsCriteria.OVERVIEW_FULL)
-                .setProfile(DirectionsCriteria.PROFILE_WALKING)
-                .setAccessToken(BuildConfig.MAPBOX_TOKEN);
+        MapboxDirections client = null;
+        try {
+            client = new MapboxDirections.Builder()
+                    .setOrigin(this.getOrigin())
+                    .setDestination(this.getDestination())
+                    .setOverview(DirectionsCriteria.OVERVIEW_FULL)
+                    .setProfile(DirectionsCriteria.PROFILE_WALKING)
+                    .setAccessToken(BuildConfig.MAPBOX_TOKEN)
+                    .build();
+        } catch (ServicesException e) {
+            e.printStackTrace();
+            return;
+        }
 
+        client.enqueueCall(new Callback<DirectionsResponse>() {
+            @Override
+            public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+                if (response.body() == null) {
+                    // TODO Error signalling
+                } else if (response.body().getRoutes().size() < 1) {
+                    // TODO Error signalling
+                } else {
+                    // We have at least one route, so it worked!
+                    events.post(new DirectionsCalculationResponseEvent(response.body().getRoutes().get(0)));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
+                events.post(new DirectionsCalculationFailureEvent(call, throwable));
+            }
+        });
     }
 
 
