@@ -78,6 +78,7 @@ public class LocationMarkerView<T> extends MarkerView {
         POI,
         NODE_REF,
         NOTE,
-        NONE
+        NONE,
+        ISSUE
     }
 }

@@ -26,6 +26,7 @@ import com.mapbox.mapboxsdk.annotations.BaseMarkerViewOptions;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
+import io.jawg.osmcontributor.api.IssueMarker;
 import io.jawg.osmcontributor.model.entities.Note;
 import io.jawg.osmcontributor.model.entities.Poi;
 import io.jawg.osmcontributor.model.entities.PoiNodeRef;
@@ -119,6 +120,8 @@ public class LocationMarkerViewOptions<T> extends BaseMarkerViewOptions<Location
             markerType = LocationMarkerView.MarkerType.NOTE;
         } else if (relatedObject instanceof PoiNodeRef) {
             markerType = LocationMarkerView.MarkerType.NODE_REF;
+        } else if ( relatedObject instanceof IssueMarker) {
+            markerType = LocationMarkerView.MarkerType.ISSUE;
         } else {
             markerType = LocationMarkerView.MarkerType.NONE;
         }

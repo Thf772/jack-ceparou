@@ -52,7 +52,7 @@ public class ReportAPI {
 
     public static final String CHARSET = "UTF-8";
 
-    RequestQueue queue;
+    //RequestQueue queue;
 
     /**
      * This method will call the server and create a new report.
@@ -103,11 +103,21 @@ public class ReportAPI {
                 HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
                 httpCon.setDoOutput(true);
                 httpCon.setRequestMethod("PUT");
+                httpCon.setRequestProperty("Content-Type","image/jpeg");
                 BufferedOutputStream out = new BufferedOutputStream(
                         httpCon.getOutputStream());
                 out.write(Files.toByteArray(new File(event.getImageFilePath())));
                 out.close();
-                httpCon.getInputStream();
+                InputStream in = httpCon.getInputStream();
+
+                StringBuilder builder2 = new StringBuilder();
+                while ((character = in.read()) != -1) {
+                    builder.append((char) character);
+                }
+                text = builder.toString();
+                response.close();
+
+                Log.e("Server Response", text);
             }
 
         } catch (UnsupportedEncodingException e) {
@@ -119,66 +129,6 @@ public class ReportAPI {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-    private void uploadImage (String id, final String imageFilePath){
-        JsonObjectRequest putRequest = new JsonObjectRequest(Request.Method.PUT, UPLOAD_IMAGE_ADDRESS + id, null,
-                new Response.Listener<JSONObject>()
-                {
-                    @Override
-                    public void onResponse(JSONObject jsonObject) {
-                        // response
-                        Log.d("Response", jsonObject.toString());
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error
-                        Log.d("Error.Response", error.toString());
-                    }
-                }
-        ) {
-
-            @Override
-            public Map<String, String> getHeaders()
-            {
-                Map<String, String> headers = new HashMap<String, String>();
-                headers.put("Content-Type", "images/JPG");
-                //headers.put("Accept", "application/json");
-                return headers;
-            }
-
-            @Override
-            public String getBodyContentType() {
-                return "images/JPG";
-            }
-
-            @Override
-            public byte[] getBody() {
-
-                try {
-
-                    byte[] data = Files.readBytes(new File(imageFilePath), null);
-
-                    return data;
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        };
-
-        queue.add(putRequest);
-    }
-
-
-
-    public ReportAPI (Context c) {
-        queue = Volley.newRequestQueue(c);
     }
 
     public static List<IssueMarker> getListOfIssues(Box box) {
@@ -210,7 +160,7 @@ public class ReportAPI {
             for (int i = 0; i<values.length(); i++)
             {
                 JSONObject val = values.getJSONObject(i);
-                IssueMarker issue = new IssueMarker(new LatLng(val.getDouble("latitude"),val.getDouble("longitude")), val.getString("name"), val.getString("description"));
+                IssueMarker issue = new IssueMarker(new LatLng(val.getDouble("latitude"),val.getDouble("longitude")), val.getString("name"), val.getString("description"), new Long(i));
                 Log.w("Ajout de Issue", issue.title);
                 listIssues.add(issue);
             }
@@ -225,5 +175,15 @@ public class ReportAPI {
         }
 
         return listIssues;
+    }
+
+    static ReportAPI instance;
+    private ReportAPI () {}
+
+    public static ReportAPI getInstance() {
+        if (instance == null) {
+            instance = new ReportAPI();
+        }
+        return instance;
     }
 }
