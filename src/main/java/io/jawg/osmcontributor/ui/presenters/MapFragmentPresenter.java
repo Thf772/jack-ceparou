@@ -191,7 +191,7 @@ public class MapFragmentPresenter {
             opt.setPosition(issue.getPosition());
             opt.setTitle(issue.getTitle());
             opt.setSnippet(issue.getDescription());
-            
+
             mapFragment.mapboxMap.addMarker(opt);
         }
         //onLoaded(mapElements, LocationMarkerView.MarkerType.ISSUE);
