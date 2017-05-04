@@ -60,6 +60,7 @@ import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.mapbox.mapboxsdk.annotations.Annotation;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
@@ -70,6 +71,10 @@ import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.services.Constants;
+import com.mapbox.services.commons.geojson.LineString;
+import com.mapbox.services.commons.models.Position;
+import com.mapbox.services.directions.v5.models.DirectionsRoute;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -249,7 +254,9 @@ public class MapFragment extends Fragment {
     @BindView(R.id.zoom_level)
     TextView zoomLevelText;
 
+    // Blablablabla
     private DirectionsCalculator dc;
+    private Annotation polyline;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -288,6 +295,8 @@ public class MapFragment extends Fragment {
         instantiateLevelBar();
         instantiatePoiTypePicker();
         instantiateCopyrightBar();
+
+        // Blablablabla
         instantiateSelectedPois();
 
         eventBus.register(this);
@@ -366,6 +375,7 @@ public class MapFragment extends Fragment {
         mapboxMap.getMarkerViewManager().addMarkerViewAdapter(new LocationMarkerViewAdapter(getActivity().getApplicationContext()));
     }
 
+    // Blablablabla
     private void instantiateSelectedPois()
     {
         selectedPois = new ArrayList<>();
@@ -601,6 +611,7 @@ public class MapFragment extends Fragment {
         return true;
     }
 
+    // Blablablabla
     private void confirmPosition() {
         LatLng newPoiPosition;
         LatLng pos;
@@ -624,6 +635,8 @@ public class MapFragment extends Fragment {
                 newPoiPosition = mapboxMap.getCameraPosition().target;
                 eventBus.post(new PleaseApplyPoiPositionChange(newPoiPosition, poi.getId()));
                 markerSelected.setPosition(newPoiPosition);
+
+                // Blablablabla
                 Log.w("Unselect", "confirmPosition");
                 markerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, true))));
                 poi.setUpdated(true);
@@ -637,6 +650,8 @@ public class MapFragment extends Fragment {
                 newPoiPosition = mapboxMap.getCameraPosition().target;
                 eventBus.post(new PleaseApplyNodeRefPositionChange(newPoiPosition, poiNodeRef.getId()));
                 wayMarkerSelected.setPosition(newPoiPosition);
+
+                // Blablablabla
                 Log.w("Unselect", "confirmPosition way");
                 wayMarkerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getNodeRefBitmap(PoiNodeRef.State.SELECTED)));
                 removePolyline(editionPolyline);
@@ -875,6 +890,7 @@ public class MapFragment extends Fragment {
         switchMode(MapMode.DEFAULT);
     }
 
+    // Blablablabla
     public void unselectMarker() {
         Log.w("Unselect", "unselectMarker");
         if (route_mode)
@@ -898,6 +914,7 @@ public class MapFragment extends Fragment {
         }
     }
 
+    // Blablablabla
     private void forceUnselectMarker()
     {
         Log.w("Force", "ok");
@@ -957,6 +974,7 @@ public class MapFragment extends Fragment {
         }
     }
 
+    // Blablablabla
     public void unselectWayMarker() {
         if (wayMarkerSelected != null) {
             Log.w("Unselect", "unselectWayMarker");
@@ -1502,12 +1520,15 @@ public class MapFragment extends Fragment {
     * ROUTE MODE
     *---------------------------------------------------------*/
 
+    // Blablablabla
     @BindView(R.id.route_mode_button)
     FloatingActionButton route_mode_button;
 
+    // Blablablabla
     @BindView(R.id.validate_route_button)
     FloatingActionButton validate_route_button;
 
+    // Blablablabla
     @OnClick(R.id.route_mode_button)
     public void toggleRouteMode()
     {
@@ -1521,10 +1542,13 @@ public class MapFragment extends Fragment {
         }
         else
         {
+            mapboxMap.getPolylines().get(0).setPoints(new ArrayList<LatLng>());
+            mapboxMap.getPolylines().clear();
             validate_route_button.setVisibility(View.GONE);
         }
     }
 
+    // Blablablabla
     @OnClick(R.id.validate_route_button)
     public void validateRoute()
     {
@@ -1534,6 +1558,7 @@ public class MapFragment extends Fragment {
         eventBus.post(startEvent);
     }
 
+    // Blablablabla
     @Subscribe
     public void onPOIMarkerClick(POIMarkerClick event)
     {
@@ -1557,10 +1582,33 @@ public class MapFragment extends Fragment {
         }
     }
 
+    // Blablablabla
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDirectionCalculationDone(DoneCalculatingDirectionsEvent event)
     {
-        Log.w("Directions", "ok");
+        DirectionsRoute route = event.getRoute();
+        Log.w("Route", String.valueOf(route.getDistance()));
+        drawRoute(route);
+    }
+
+    // Blablablabla
+    private void drawRoute(DirectionsRoute route) {
+        mapboxMap.getPolylines().clear();
+        // Convert LineString coordinates into LatLng[]
+        LineString lineString = LineString.fromPolyline(route.getGeometry(), Constants.OSRM_PRECISION_V5);
+        List<Position> coordinates = lineString.getCoordinates();
+        LatLng[] points = new LatLng[coordinates.size()];
+        for (int i = 0; i < coordinates.size(); i++) {
+            points[i] = new LatLng(
+                    coordinates.get(i).getLatitude(),
+                    coordinates.get(i).getLongitude());
+        }
+
+        // Draw Points on MapView
+        mapboxMap.addPolyline(new PolylineOptions()
+                .add(points)
+                .color(Color.parseColor("#009688"))
+                .width(5));
     }
 
     /*-----------------------------------------------------------
@@ -1641,6 +1689,7 @@ public class MapFragment extends Fragment {
         }, 700);
     }
 
+    // Blablablabla
     public void hideMarker(Marker marker) {
         Log.w("Unselect", "hideMarker");
         marker.setIcon(IconFactory.getInstance(getActivity()).fromResource(R.drawable.hidden_marker));
