@@ -39,7 +39,6 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -63,6 +62,7 @@ import com.github.clans.fab.FloatingActionMenu;
 import com.mapbox.mapboxsdk.annotations.Annotation;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.Marker;
+import com.mapbox.mapboxsdk.annotations.Polyline;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdate;
@@ -618,7 +618,6 @@ public class MapFragment extends Fragment {
         return true;
     }
 
-    // Blablablabla
     private void confirmPosition() {
         LatLng newPoiPosition;
         LatLng pos;
@@ -642,16 +641,10 @@ public class MapFragment extends Fragment {
                 newPoiPosition = mapboxMap.getCameraPosition().target;
                 eventBus.post(new PleaseApplyPoiPositionChange(newPoiPosition, poi.getId()));
                 markerSelected.setPosition(newPoiPosition);
-                markerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, true), poi.computeAccessibilityType())));
-
-                // Blablablabla
-                Log.w("Unselect", "confirmPosition");
-                markerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, true))));
-
+                markerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, true, selectedPois.contains(poi)), poi.computeAccessibilityType())));
                 poi.setUpdated(true);
                 mapboxMap.updateMarker(markerSelected);
                 switchMode(MapMode.DETAIL_POI);
-
                 break;
 
             case NODE_REF_POSITION_EDITION:
@@ -659,9 +652,6 @@ public class MapFragment extends Fragment {
                 newPoiPosition = mapboxMap.getCameraPosition().target;
                 eventBus.post(new PleaseApplyNodeRefPositionChange(newPoiPosition, poiNodeRef.getId()));
                 wayMarkerSelected.setPosition(newPoiPosition);
-
-                // Blablablabla
-                Log.w("Unselect", "confirmPosition way");
                 wayMarkerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getNodeRefBitmap(PoiNodeRef.State.SELECTED)));
                 removePolyline(editionPolyline);
                 switchMode(MapMode.WAY_EDITION);
@@ -794,7 +784,7 @@ public class MapFragment extends Fragment {
 
             case POI_POSITION_EDITION:
                 // This marker is being moved
-                bitmap = bitmapHandler.getMarkerBitmap(((Poi) markerSelected.getRelatedObject()).getType(), Poi.computeState(false, true, false));
+                bitmap = bitmapHandler.getMarkerBitmap(((Poi) markerSelected.getRelatedObject()).getType(), Poi.computeState(false, true, false, selectedPois.contains(markerSelected.getRelatedObject())));
                 creationPin.setImageBitmap(bitmap);
                 break;
 
@@ -899,41 +889,14 @@ public class MapFragment extends Fragment {
         switchMode(MapMode.DEFAULT);
     }
 
-    // Blablablabla
     public void unselectMarker() {
-        Log.w("Unselect", "unselectMarker");
-        if (route_mode)
-        {
-            if (markerSelected != null)
-            {
-                if (markerSelected.getType() == LocationMarkerView.MarkerType.POI)
-                {
-                    Poi poi = (Poi)markerSelected.getRelatedObject();
-
-                    if (selectedPois.contains(poi))
-                    {
-//                        ForceUnselectMarker();
-                    }
-                }
-            }
-        }
-        else
-        {
-            forceUnselectMarker();
-        }
-    }
-
-    // Blablablabla
-    private void forceUnselectMarker()
-    {
-        Log.w("Force", "ok");
         if (markerSelected != null) {
             Bitmap bitmap = null;
 
             switch (markerSelected.getType()) {
                 case POI:
                     Poi poi = (Poi) markerSelected.getRelatedObject();
-                    bitmap = bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, poi.getUpdated()), poi.computeAccessibilityType());
+                    bitmap = bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, poi.getUpdated(), selectedPois.contains(poi)), poi.computeAccessibilityType());
                     break;
 
                 case NOTE:
@@ -953,8 +916,6 @@ public class MapFragment extends Fragment {
 
     public void unselectWayMarker() {
         if (wayMarkerSelected != null) {
-            // Blablablabla
-            Log.w("Unselect", "unselectWayMarker");
             wayMarkerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getNodeRefBitmap(PoiNodeRef.State.NONE)));
         }
     }
@@ -1172,8 +1133,6 @@ public class MapFragment extends Fragment {
 
     public void selectWayMarker() {
         editNodeRefPosition.setVisibility(View.VISIBLE);
-        //Blablabla
-        Log.w("Unselect", "selectWayMarker");
         wayMarkerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getNodeRefBitmap(PoiNodeRef.State.SELECTED)));
         changeMapPositionSmooth(wayMarkerSelected.getPosition());
     }
@@ -1251,10 +1210,7 @@ public class MapFragment extends Fragment {
         savePoiTypeId = 0;
         Bitmap bitmap;
 
-        //Blablabla
-        Log.w("Unselect", "poiTypeSelected");
-
-        bitmap = bitmapHandler.getMarkerBitmap(poiType, Poi.computeState(false, true, false));
+        bitmap = bitmapHandler.getMarkerBitmap(poiType, Poi.computeState(false, true, false, false));
         if (poiTypeHidden.contains(poiType.getId())) {
             poiTypeHidden.remove(poiType.getId());
             applyPoiFilter();
@@ -1512,78 +1468,89 @@ public class MapFragment extends Fragment {
     * ROUTE MODE
     *---------------------------------------------------------*/
 
-    // Blablablabla
     @BindView(R.id.route_mode_button)
     FloatingActionButton route_mode_button;
 
-    // Blablablabla
     @BindView(R.id.validate_route_button)
     FloatingActionButton validate_route_button;
 
-    // Blablablabla
+    public boolean selectedPoisContains(Poi poi) {
+        return selectedPois.contains(poi);
+    }
+
+    private void resetMarkerColors() {
+        Iterator it = markersPoi.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            LocationMarkerViewOptions<Poi> lmvo = (LocationMarkerViewOptions<Poi>) pair.getValue();
+            Marker marker = lmvo.getMarker();
+            Poi poi = lmvo.getRelatedObject();
+            Bitmap bitmap = bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, poi.getUpdated(), selectedPois.contains(poi)), poi.computeAccessibilityType());
+            if (bitmap != null) {
+                marker.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmap));
+            }
+        }
+    }
+
     @OnClick(R.id.route_mode_button)
     public void toggleRouteMode()
     {
         route_mode = !route_mode;
 
+        List<Polyline> allPolylines = mapboxMap.getPolylines();
+        if (!selectedPois.isEmpty() && !allPolylines.isEmpty()) {
+            selectedPois.clear();
+            allPolylines.clear();
+            resetMarkerColors();
+        }
+
         if (route_mode)
         {
             validate_route_button.setVisibility(View.VISIBLE);
-            selectedPois.clear();
-            Log.w("Route mode", "ok");
         }
         else
         {
-            mapboxMap.getPolylines().get(0).setPoints(new ArrayList<LatLng>());
-            mapboxMap.getPolylines().clear();
+            if (!allPolylines.isEmpty()) {
+                allPolylines.get(0).setPoints(new ArrayList<LatLng>());
+            }
             validate_route_button.setVisibility(View.GONE);
         }
     }
 
-    // Blablablabla
     @OnClick(R.id.validate_route_button)
     public void validateRoute()
     {
-        Log.w("Selected POIS", String.valueOf(selectedPois.size()));
         dc.setPoints(selectedPois);
         StartDirectionsCalculationEvent startEvent = new StartDirectionsCalculationEvent(selectedPois);
         eventBus.post(startEvent);
     }
 
-    // Blablablabla
     @Subscribe
     public void onPOIMarkerClick(POIMarkerClick event)
     {
         LocationMarkerView<Poi> marker = event.getMarker();
         Poi poi = (Poi) marker.getRelatedObject();
 
-        Log.w("POI", "Id : " + String.valueOf(poi.getId()));
-
         if (route_mode)
         {
             if (selectedPois.contains(poi))
             {
-                Log.w("POI", "Remove");
                 selectedPois.remove(poi);
             }
             else
             {
-                Log.w("POI", "Add");
                 selectedPois.add(poi);
             }
         }
     }
 
-    // Blablablabla
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDirectionCalculationDone(DoneCalculatingDirectionsEvent event)
     {
         DirectionsRoute route = event.getRoute();
-        Log.w("Route", String.valueOf(route.getDistance()));
         drawRoute(route);
     }
 
-    // Blablablabla
     private void drawRoute(DirectionsRoute route) {
         mapboxMap.getPolylines().clear();
         // Convert LineString coordinates into LatLng[]
@@ -1682,9 +1649,6 @@ public class MapFragment extends Fragment {
     }
 
     public void hideMarker(Marker marker) {
-        // Blablablabla
-        Log.w("Unselect", "hideMarker");
-
         marker.setIcon(IconFactory.getInstance(getActivity()).fromResource(R.drawable.hidden_marker));
     }
 
@@ -2029,20 +1993,6 @@ public class MapFragment extends Fragment {
 
     public void applyAccessibilityFilter() {
         Timber.d("Display Colored POI with accessibility-associated color");
-
-        // Color the POI
-        Iterator it = markersPoi.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            LocationMarkerViewOptions<Poi> lmvo = (LocationMarkerViewOptions<Poi>) pair.getValue();
-            Marker marker = lmvo.getMarker();
-            Poi poi = lmvo.getRelatedObject();
-            Bitmap bitmap = bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, poi.getUpdated()), poi.computeAccessibilityType());
-            if (bitmap != null) {
-                marker.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmap));
-            }
-        }
-
         for (LocationMarkerViewOptions marker : markersPoi.values()) {
             removeMarkerView(marker);
             addPoiMarkerDependingOnFilters(marker);

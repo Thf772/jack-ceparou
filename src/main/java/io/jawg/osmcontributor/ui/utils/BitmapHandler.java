@@ -249,6 +249,9 @@ public class BitmapHandler {
                 case MOVING:
                     markerId = R.drawable.marker_red;
                     break;
+                case ITINERARY_SELECTED:
+                    markerId = R.drawable.marker_true_blue;
+                    break;
             }
 
             String bitmapCacheId = markerId.toString() + iconId.toString();
@@ -333,6 +336,9 @@ public class BitmapHandler {
                     break;
                 case MOVING:
                     markerId = R.drawable.marker_red;
+                    break;
+                case ITINERARY_SELECTED:
+                    markerId = R.drawable.marker_true_blue;
                     break;
             }
 

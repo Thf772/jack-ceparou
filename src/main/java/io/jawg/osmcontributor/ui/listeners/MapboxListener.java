@@ -21,7 +21,6 @@ package io.jawg.osmcontributor.ui.listeners;
 import android.animation.ValueAnimator;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -252,9 +251,8 @@ public class MapboxListener {
      * @param marker
      */
     void onPoiMarkerClick(LocationMarkerView<Poi> marker) {
-        Bitmap bitmap = mapFragment.getBitmapHandler().getMarkerBitmap(marker.getRelatedObject().getType(), Poi.computeState(true, false, false), marker.getRelatedObject().computeAccessibilityType());
+        Bitmap bitmap = mapFragment.getBitmapHandler().getMarkerBitmap(marker.getRelatedObject().getType(), Poi.computeState(true, false, false, mapFragment.selectedPoisContains(marker.getRelatedObject())), marker.getRelatedObject().computeAccessibilityType());
         if (bitmap != null) {
-            Log.w("Unselect", "onPoiMarkerClick");
             marker.setIcon(IconFactory.getInstance(mapFragment.getActivity()).fromBitmap(bitmap));
         }
         mapFragment.switchMode(MapMode.DETAIL_POI);

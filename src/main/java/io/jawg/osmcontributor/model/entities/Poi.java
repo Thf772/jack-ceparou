@@ -67,7 +67,7 @@ public class Poi implements Cloneable, MapElement {
     }
 
     public enum State {
-        NORMAL, SELECTED, MOVING, NOT_SYNCED
+        NORMAL, SELECTED, MOVING, NOT_SYNCED, ITINERARY_SELECTED
     }
 
     public AccessibilityType computeAccessibilityType() {
@@ -90,7 +90,7 @@ public class Poi implements Cloneable, MapElement {
         return AccessibilityType.UNKNOWN;
     }
 
-    public static State computeState(boolean selected, boolean edition, boolean needsSync) {
+    public static State computeState(boolean selected, boolean edition, boolean needsSync, boolean itinerarySelected) {
 
         if (edition) {
             return State.MOVING;
@@ -102,6 +102,10 @@ public class Poi implements Cloneable, MapElement {
 
         if (needsSync) {
             return State.NOT_SYNCED;
+        }
+
+        if (itinerarySelected) {
+            return State.ITINERARY_SELECTED;
         }
 
         return State.NORMAL;
