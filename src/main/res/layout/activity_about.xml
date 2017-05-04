@@ -19,109 +19,78 @@
     along with OSM Contributor.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:activity=".ui.activities.AboutActivity">
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary"
+    tools:activity=".ui.activities.AboutActivity"
+    >
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_layout"/>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:layout_below="@id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:shadowRadius="2"
+        android:text="@string/name"
+        android:textColor="@color/white"
+        android:textSize="40sp"
+        />
 
-        <include
-            android:id="@+id/toolbar"
-            layout="@layout/toolbar_layout"/>
+    <TextView
+        android:id="@+id/mapsquare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title"
+        android:layout_centerHorizontal="true"
+        android:textSize="24sp"/>
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/toolbar"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:shadowRadius="2"
-            android:text="@string/template_name"
-            android:textColor="@color/colorPrimary"
-            android:textSize="40sp"/>
+    <ImageView
+        android:id="@+id/splash_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/jack_c"
+        android:layout_margin="24sp"/>
 
-        <TextView
-            android:id="@+id/mapsquare"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/title"
-            android:layout_centerHorizontal="true"
-            android:textSize="24sp"/>
+    <TextView
+        android:id="@+id/contribute_to"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        android:drawableEnd="@drawable/logo_osm"
+        android:drawablePadding="5dp"
+        android:drawableRight="@drawable/logo_osm"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:layout_margin="16sp"/>
 
-        <ImageView
-            android:id="@+id/splash_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/mapsquare"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:src="@drawable/splash"/>
+    <Button
+        android:id="@+id/licenses_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/licenses_title"
+        android:layout_margin="24sp"
+        android:layout_centerHorizontal="true" />
 
-        <TextView
-            android:id="@+id/contribute_to"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/splash_image"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="5dp"
-            android:drawableEnd="@drawable/logo_osm"
-            android:drawablePadding="5dp"
-            android:drawableRight="@drawable/logo_osm"
-            android:gravity="center"
-            android:textSize="14sp"/>
+    <TextView
+        android:id="@+id/version_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="24sp" />
 
-        <TextView
-            android:id="@+id/edited_by"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/contribute_to"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="5dp"
-            android:drawableEnd="@drawable/logo_ebusiness"
-            android:drawablePadding="5dp"
-            android:drawableRight="@drawable/logo_ebusiness"
-            android:gravity="center"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:id="@+id/powered_by"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/edited_by"
-            android:layout_centerHorizontal="true"
-            android:drawableEnd="@drawable/logo_dma"
-            android:drawablePadding="5dp"
-            android:drawableRight="@drawable/logo_dma"
-            android:gravity="center"
-            android:textSize="14sp"/>
-
-        <Button
-            android:id="@+id/licenses_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/powered_by"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_marginTop="10dp"
-            android:text="@string/licenses_title"/>
-
-        <TextView
-            android:id="@+id/version_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/licenses_button"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="5dp"/>
-    </RelativeLayout>
-</ScrollView>
+</LinearLayout>

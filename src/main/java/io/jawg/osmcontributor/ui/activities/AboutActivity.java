@@ -43,12 +43,6 @@ public class AboutActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    @BindView(R.id.edited_by)
-    TextView editBy;
-
-    @BindView(R.id.powered_by)
-    TextView poweredBy;
-
     @BindView(R.id.contribute_to)
     TextView contributeTo;
 
@@ -79,8 +73,6 @@ public class AboutActivity extends AppCompatActivity {
 
         mapsquare.setText(Html.fromHtml(getString(R.string.mapsquare)));
         contributeTo.setText(Html.fromHtml(getString(R.string.contribute_to)));
-        editBy.setText(Html.fromHtml(getString(R.string.splash_screen_edited_by)));
-        poweredBy.setText(Html.fromHtml(getString(R.string.splash_screen_powered_by)));
         version.setText(getString(R.string.version_format, BuildConfig.VERSION_NAME));
     }
 
@@ -105,16 +97,6 @@ public class AboutActivity extends AppCompatActivity {
     @OnClick(R.id.contribute_to)
     public void contributeClick() {
         openUrlInBrowser(getString(R.string.osm_url));
-    }
-
-    @OnClick(R.id.edited_by)
-    public void editedClick() {
-        openUrlInBrowser(getString(R.string.ebiz_url));
-    }
-
-    @OnClick(R.id.powered_by)
-    public void poweredClick() {
-        openUrlInBrowser(getString(R.string.dma_url));
     }
 
     @OnClick(R.id.licenses_button)
