@@ -21,6 +21,7 @@ package io.jawg.osmcontributor.ui.presenters;
 import android.graphics.Bitmap;
 
 import com.mapbox.mapboxsdk.annotations.IconFactory;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 
@@ -184,11 +185,16 @@ public class MapFragmentPresenter {
     public void onIssueLoadedEvent(IssuesLoadedEvent event) {
         List<IssueMarker> markers = event.getMarkers();
 
-        List<MapElement> mapElements = new ArrayList<>(markers.size());
+
         for (IssueMarker issue : markers) {
-            mapElements.add(issue);
+            MarkerOptions opt = new MarkerOptions();
+            opt.setPosition(issue.getPosition());
+            opt.setTitle(issue.getTitle());
+            opt.setSnippet(issue.getDescription());
+            
+            mapFragment.mapboxMap.addMarker(opt);
         }
-        onLoaded(mapElements, LocationMarkerView.MarkerType.ISSUE);
+        //onLoaded(mapElements, LocationMarkerView.MarkerType.ISSUE);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

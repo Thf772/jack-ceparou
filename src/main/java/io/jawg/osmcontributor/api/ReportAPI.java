@@ -103,7 +103,7 @@ public class ReportAPI {
                 HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
                 httpCon.setDoOutput(true);
                 httpCon.setRequestMethod("PUT");
-                httpCon.setRequestProperty("Content-Type","images/jeg");
+                httpCon.setRequestProperty("Content-Type","image/jpeg");
                 BufferedOutputStream out = new BufferedOutputStream(
                         httpCon.getOutputStream());
                 out.write(Files.toByteArray(new File(event.getImageFilePath())));

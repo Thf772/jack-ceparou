@@ -214,7 +214,7 @@ public class MapFragment extends Fragment {
     private MapFragmentPresenter presenter;
     private MapboxListener mapboxListener;
 
-    private MapboxMap mapboxMap;
+    public MapboxMap mapboxMap;
 
     private Unbinder unbinder;
 
