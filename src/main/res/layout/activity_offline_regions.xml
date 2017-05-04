@@ -32,15 +32,14 @@
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar">
 
-        <com.mapbox.mapboxsdk.maps.MapView
-            android:id="@+id/mapview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:attribution_enabled="false"
-            app:logo_enabled="false"
-            app:rotate_enabled="true"
-            app:zoom_enabled="true"
-            app:compass_enabled="false"/>
+        com.mapbox.mapboxsdk.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        mapbox:mapbox_cameraTargetLat="52.5171"
+        mapbox:mapbox_cameraTargetLng="13.1479"
+        mapbox:mapbox_styleUrl="@string/mapbox_style_mapbox_streets"
+        mapbox:mapbox_cameraZoom="8"/>
 
         <View
             android:layout_width="match_parent"

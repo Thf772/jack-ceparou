@@ -1,18 +1,18 @@
 /**
  * Copyright (C) 2016 eBusiness Information
- * <p>
+ *
  * This file is part of OSM Contributor.
- * <p>
+ *
  * OSM Contributor is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * <p>
+ *
  * OSM Contributor is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * <p>
+ *
  * You should have received a copy of the GNU General Public License
  * along with OSM Contributor.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -39,6 +39,7 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -59,6 +60,7 @@ import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.mapbox.mapboxsdk.annotations.Annotation;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
@@ -69,6 +71,10 @@ import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.services.Constants;
+import com.mapbox.services.commons.geojson.LineString;
+import com.mapbox.services.commons.models.Position;
+import com.mapbox.services.directions.v5.models.DirectionsRoute;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -123,6 +129,7 @@ import io.jawg.osmcontributor.ui.events.edition.PleaseApplyNodeRefPositionChange
 import io.jawg.osmcontributor.ui.events.edition.PleaseApplyPoiPositionChange;
 import io.jawg.osmcontributor.ui.events.map.AddressFoundEvent;
 import io.jawg.osmcontributor.ui.events.map.ChangeMapModeEvent;
+import io.jawg.osmcontributor.ui.events.map.DoneCalculatingDirectionsEvent;
 import io.jawg.osmcontributor.ui.events.map.EditionWaysLoadedEvent;
 import io.jawg.osmcontributor.ui.events.map.LastUsePoiTypeLoaded;
 import io.jawg.osmcontributor.ui.events.map.MapCenterValueEvent;
@@ -130,6 +137,7 @@ import io.jawg.osmcontributor.ui.events.map.NewNoteCreatedEvent;
 import io.jawg.osmcontributor.ui.events.map.NewPoiTypeSelected;
 import io.jawg.osmcontributor.ui.events.map.OnBackPressedMapEvent;
 import io.jawg.osmcontributor.ui.events.map.PleaseApplyAccessibilityFilter;
+import io.jawg.osmcontributor.ui.events.map.POIMarkerClick;
 import io.jawg.osmcontributor.ui.events.map.PleaseApplyNoteFilterEvent;
 import io.jawg.osmcontributor.ui.events.map.PleaseApplyPoiFilter;
 import io.jawg.osmcontributor.ui.events.map.PleaseChangePoiPosition;
@@ -153,6 +161,7 @@ import io.jawg.osmcontributor.ui.events.map.PleaseToggleArpiEvent;
 import io.jawg.osmcontributor.ui.events.map.PleaseToggleDrawer;
 import io.jawg.osmcontributor.ui.events.map.PleaseToggleDrawerLock;
 import io.jawg.osmcontributor.ui.events.map.PoiNoTypeCreated;
+import io.jawg.osmcontributor.ui.events.map.StartDirectionsCalculationEvent;
 import io.jawg.osmcontributor.ui.events.note.ApplyNewCommentFailedEvent;
 import io.jawg.osmcontributor.ui.listeners.MapboxListener;
 import io.jawg.osmcontributor.ui.listeners.OnZoomAnimationFinishedListener;
@@ -170,6 +179,7 @@ import io.jawg.osmcontributor.ui.utils.views.map.marker.LocationMarkerViewOption
 import io.jawg.osmcontributor.ui.utils.views.map.marker.WayMarker;
 import io.jawg.osmcontributor.ui.utils.views.map.marker.WayMarkerOptions;
 import io.jawg.osmcontributor.utils.ConfigManager;
+import io.jawg.osmcontributor.utils.DirectionsCalculator;
 import io.jawg.osmcontributor.utils.FlavorUtils;
 import io.jawg.osmcontributor.utils.OsmAnswers;
 import io.jawg.osmcontributor.utils.StringUtils;
@@ -220,6 +230,9 @@ public class MapFragment extends Fragment {
 
     private Location lastLocation;
 
+    private boolean route_mode;
+    private List<Poi> selectedPois;
+
     @Inject
     BitmapHandler bitmapHandler;
 
@@ -250,6 +263,9 @@ public class MapFragment extends Fragment {
     @BindView(R.id.zoom_level)
     TextView zoomLevelText;
 
+    private DirectionsCalculator dc;
+    private Annotation polyline;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -260,6 +276,8 @@ public class MapFragment extends Fragment {
 
         presenter = new MapFragmentPresenter(this);
         mapboxListener = new MapboxListener(this, eventBus);
+
+        dc = new DirectionsCalculator(eventBus);
     }
 
     @Override
@@ -286,6 +304,8 @@ public class MapFragment extends Fragment {
         instantiateLevelBar();
         instantiatePoiTypePicker();
         instantiateCopyrightBar();
+
+        instantiateSelectedPois();
 
         eventBus.register(this);
         eventBus.register(presenter);
@@ -361,6 +381,11 @@ public class MapFragment extends Fragment {
         mapboxListener.listen(mapboxMap, mapView);
 
         mapboxMap.getMarkerViewManager().addMarkerViewAdapter(new LocationMarkerViewAdapter(getActivity().getApplicationContext()));
+    }
+
+    private void instantiateSelectedPois()
+    {
+        selectedPois = new ArrayList<>();
     }
 
     private void instantiateMapView(final Bundle savedInstanceState) {
@@ -593,6 +618,7 @@ public class MapFragment extends Fragment {
         return true;
     }
 
+    // Blablablabla
     private void confirmPosition() {
         LatLng newPoiPosition;
         LatLng pos;
@@ -617,9 +643,15 @@ public class MapFragment extends Fragment {
                 eventBus.post(new PleaseApplyPoiPositionChange(newPoiPosition, poi.getId()));
                 markerSelected.setPosition(newPoiPosition);
                 markerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, true), poi.computeAccessibilityType())));
+
+                // Blablablabla
+                Log.w("Unselect", "confirmPosition");
+                markerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getMarkerBitmap(poi.getType(), Poi.computeState(false, false, true))));
+
                 poi.setUpdated(true);
                 mapboxMap.updateMarker(markerSelected);
                 switchMode(MapMode.DETAIL_POI);
+
                 break;
 
             case NODE_REF_POSITION_EDITION:
@@ -627,6 +659,9 @@ public class MapFragment extends Fragment {
                 newPoiPosition = mapboxMap.getCameraPosition().target;
                 eventBus.post(new PleaseApplyNodeRefPositionChange(newPoiPosition, poiNodeRef.getId()));
                 wayMarkerSelected.setPosition(newPoiPosition);
+
+                // Blablablabla
+                Log.w("Unselect", "confirmPosition way");
                 wayMarkerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getNodeRefBitmap(PoiNodeRef.State.SELECTED)));
                 removePolyline(editionPolyline);
                 switchMode(MapMode.WAY_EDITION);
@@ -774,6 +809,15 @@ public class MapFragment extends Fragment {
                 loadAreaForEdition();
                 break;
 
+            case ROUTE_MODE:
+                if (properties.isShowButtons())
+                {
+                    route_mode_button.setVisibility(View.VISIBLE);
+                    floatingButtonLocalisation.setVisibility(View.VISIBLE);
+                    addPoiFloatingMenu.setVisibility(View.VISIBLE);
+                }
+                break;
+
             default:
                 poiTypeSelected = null;
                 poiTypeEditText.setText("");
@@ -855,7 +899,34 @@ public class MapFragment extends Fragment {
         switchMode(MapMode.DEFAULT);
     }
 
+    // Blablablabla
     public void unselectMarker() {
+        Log.w("Unselect", "unselectMarker");
+        if (route_mode)
+        {
+            if (markerSelected != null)
+            {
+                if (markerSelected.getType() == LocationMarkerView.MarkerType.POI)
+                {
+                    Poi poi = (Poi)markerSelected.getRelatedObject();
+
+                    if (selectedPois.contains(poi))
+                    {
+//                        ForceUnselectMarker();
+                    }
+                }
+            }
+        }
+        else
+        {
+            forceUnselectMarker();
+        }
+    }
+
+    // Blablablabla
+    private void forceUnselectMarker()
+    {
+        Log.w("Force", "ok");
         if (markerSelected != null) {
             Bitmap bitmap = null;
 
@@ -882,6 +953,8 @@ public class MapFragment extends Fragment {
 
     public void unselectWayMarker() {
         if (wayMarkerSelected != null) {
+            // Blablablabla
+            Log.w("Unselect", "unselectWayMarker");
             wayMarkerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getNodeRefBitmap(PoiNodeRef.State.NONE)));
         }
     }
@@ -1099,6 +1172,8 @@ public class MapFragment extends Fragment {
 
     public void selectWayMarker() {
         editNodeRefPosition.setVisibility(View.VISIBLE);
+        //Blablabla
+        Log.w("Unselect", "selectWayMarker");
         wayMarkerSelected.setIcon(IconFactory.getInstance(getActivity()).fromBitmap(bitmapHandler.getNodeRefBitmap(PoiNodeRef.State.SELECTED)));
         changeMapPositionSmooth(wayMarkerSelected.getPosition());
     }
@@ -1175,6 +1250,9 @@ public class MapFragment extends Fragment {
         poiTypeSelected = poiType;
         savePoiTypeId = 0;
         Bitmap bitmap;
+
+        //Blablabla
+        Log.w("Unselect", "poiTypeSelected");
 
         bitmap = bitmapHandler.getMarkerBitmap(poiType, Poi.computeState(false, true, false));
         if (poiTypeHidden.contains(poiType.getId())) {
@@ -1370,7 +1448,7 @@ public class MapFragment extends Fragment {
         Poi poi = (Poi) markerSelected.getRelatedObject();
         poiTypeSelected(poi.getType());
         mapboxMap.setCameraPosition(
-                new CameraPosition.Builder().target(new LatLng(poi.getLatitude(), poi.getLongitude())).build());
+            new CameraPosition.Builder().target(new LatLng(poi.getLatitude(), poi.getLongitude())).build());
         switchMode(MapMode.POI_CREATION);
     }
 
@@ -1428,6 +1506,101 @@ public class MapFragment extends Fragment {
                 noteDetailWrapper.setVisibility(View.GONE);
             }
         }
+    }
+
+    /*-----------------------------------------------------------
+    * ROUTE MODE
+    *---------------------------------------------------------*/
+
+    // Blablablabla
+    @BindView(R.id.route_mode_button)
+    FloatingActionButton route_mode_button;
+
+    // Blablablabla
+    @BindView(R.id.validate_route_button)
+    FloatingActionButton validate_route_button;
+
+    // Blablablabla
+    @OnClick(R.id.route_mode_button)
+    public void toggleRouteMode()
+    {
+        route_mode = !route_mode;
+
+        if (route_mode)
+        {
+            validate_route_button.setVisibility(View.VISIBLE);
+            selectedPois.clear();
+            Log.w("Route mode", "ok");
+        }
+        else
+        {
+            mapboxMap.getPolylines().get(0).setPoints(new ArrayList<LatLng>());
+            mapboxMap.getPolylines().clear();
+            validate_route_button.setVisibility(View.GONE);
+        }
+    }
+
+    // Blablablabla
+    @OnClick(R.id.validate_route_button)
+    public void validateRoute()
+    {
+        Log.w("Selected POIS", String.valueOf(selectedPois.size()));
+        dc.setPoints(selectedPois);
+        StartDirectionsCalculationEvent startEvent = new StartDirectionsCalculationEvent(selectedPois);
+        eventBus.post(startEvent);
+    }
+
+    // Blablablabla
+    @Subscribe
+    public void onPOIMarkerClick(POIMarkerClick event)
+    {
+        LocationMarkerView<Poi> marker = event.getMarker();
+        Poi poi = (Poi) marker.getRelatedObject();
+
+        Log.w("POI", "Id : " + String.valueOf(poi.getId()));
+
+        if (route_mode)
+        {
+            if (selectedPois.contains(poi))
+            {
+                Log.w("POI", "Remove");
+                selectedPois.remove(poi);
+            }
+            else
+            {
+                Log.w("POI", "Add");
+                selectedPois.add(poi);
+            }
+        }
+    }
+
+    // Blablablabla
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDirectionCalculationDone(DoneCalculatingDirectionsEvent event)
+    {
+        DirectionsRoute route = event.getRoute();
+        Log.w("Route", String.valueOf(route.getDistance()));
+        drawRoute(route);
+    }
+
+    // Blablablabla
+    private void drawRoute(DirectionsRoute route) {
+        mapboxMap.getPolylines().clear();
+        // Convert LineString coordinates into LatLng[]
+        LineString lineString = LineString.fromPolyline(route.getGeometry(), Constants.OSRM_PRECISION_V5);
+        List<Position> coordinates = lineString.getCoordinates();
+        LatLng[] points = new LatLng[coordinates.size()];
+        for (int i = 0; i < coordinates.size(); i++) {
+            points[i] = new LatLng(
+                    coordinates.get(i).getLatitude(),
+                    coordinates.get(i).getLongitude());
+        }
+
+        // Draw Points on MapView
+        mapboxMap.addPolyline(new PolylineOptions()
+                .add(points)
+                .color(Color.parseColor("#009688"))
+                .width(5));
     }
 
     /*-----------------------------------------------------------
@@ -1509,6 +1682,9 @@ public class MapFragment extends Fragment {
     }
 
     public void hideMarker(Marker marker) {
+        // Blablablabla
+        Log.w("Unselect", "hideMarker");
+
         marker.setIcon(IconFactory.getInstance(getActivity()).fromResource(R.drawable.hidden_marker));
     }
 

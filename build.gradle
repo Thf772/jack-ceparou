@@ -36,6 +36,7 @@ ext {
 buildscript {
     repositories {
         jcenter()
+        mavenCentral()
         maven { url 'https://maven.fabric.io/public' }
         flatDir {
             dirs 'lib'
@@ -330,9 +331,9 @@ task checkstyle(type: Checkstyle) {
     // empty classpath
     classpath = files()
 }
-
-/*preBuild.dependsOn('checkstyle')*/
-
+/*
+preBuild.dependsOn('checkstyle')
+*/
 /*apply plugin: 'com.github.hierynomus.license'
 license {
     header = file("LICENSE-HEADER")
