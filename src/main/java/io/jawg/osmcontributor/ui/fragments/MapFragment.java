@@ -1498,11 +1498,13 @@ public class MapFragment extends Fragment {
         route_mode = !route_mode;
 
         List<Polyline> allPolylines = mapboxMap.getPolylines();
-        if (!selectedPois.isEmpty() && !allPolylines.isEmpty()) {
+        if (!selectedPois.isEmpty()) {
             selectedPois.clear();
-            allPolylines.clear();
-            resetMarkerColors();
         }
+        if (!allPolylines.isEmpty()) {
+            mapboxMap.getPolylines().clear();
+        }
+        resetMarkerColors();
 
         if (route_mode)
         {
@@ -1540,6 +1542,7 @@ public class MapFragment extends Fragment {
             else
             {
                 selectedPois.add(poi);
+                if (!markersPoi.containsValue(poi));
             }
         }
     }
